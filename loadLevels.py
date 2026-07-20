@@ -15,11 +15,11 @@ def loadLevels(level: int) -> list[list[Optional[block.Block]]]:
 
                 blocks[i][j] = block.Block(level=level, name=l[i][j], x=x, y=y)
         else:
-            for j in range(0,getLevels.getLevelWidth(level), 2):
-                x = j*15
+            for j in range(getLevels.getLevelWidth(level)):
+                x = j*30
                 y = i*30
 
-                blocks[i][j] = block.Block(level=level, name=f"{l[i][j]}{l[i][j+1]}", x=x, y=y)
+                blocks[i][j] = block.Block(level=level, name=f"{l[i][j*2]}{l[i][j*2+1]}", x=x, y=y)
     return blocks
             
 loadLevels(0)

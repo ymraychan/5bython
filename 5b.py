@@ -7,6 +7,7 @@ import logic
 import loadLevels
 import block
 import Door
+import getBg
 from typing import Final, Optional
 
 TITLE: Final[str] = 'BFDIA 5b'
@@ -19,8 +20,9 @@ HEIGHT: Final[int] = min(_[0][1], 18 * BLOCK_WIDTH)
 
 del _
 
+level = 52
 
-blocks: list[list[Optional[block.Block]]] = loadLevels.loadLevels(52)
+blocks: list[list[Optional[block.Block]]] = loadLevels.loadLevels(level)
 
 def update():
     for _ in blocks:
@@ -29,10 +31,11 @@ def update():
                 if b.frameCount > 1:
                     b.addFrame()
 
+bg = getBg.getBg(level, WIDTH, HEIGHT) # type: ignore
 
 def draw():
     screen.clear() # type: ignore
-    screen.blit(pygame.transform.scale(images.bg.bg0000, (WIDTH, HEIGHT)), (0,0)) # type: ignore
+    screen.blit(bg, (0,0)) # type: ignore
     for _ in blocks:
         for tile in _:
             if tile:
