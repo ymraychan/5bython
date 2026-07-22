@@ -1,26 +1,28 @@
 import os
 os.environ['SDL_VIDEO_CENTERED'] = '1'
 
-import pgzrun
 import pygame
-import logic
 import loadLevels
 import block
-import Door
-import getBg
+from bg.getBg import getBg
+from bg.drawBg import drawBg
+from music import playBgMusic
 from typing import Final, Optional
+
+pygame.init()
 
 TITLE: Final[str] = 'BFDIA 5b'
 BLOCK_WIDTH: Final[int] = 30
 
-_: list[tuple[int, int]] = pygame.display.get_desktop_sizes()
+WIDTH: Final[int] = min(pygame.display.get_desktop_sizes()[0][0], 32 * BLOCK_WIDTH)
+HEIGHT: Final[int] = min(pygame.display.get_desktop_sizes()[0][1], 18 * BLOCK_WIDTH)
 
-WIDTH: Final[int] = min(_[0][0], 32 * BLOCK_WIDTH)
-HEIGHT: Final[int] = min(_[0][1], 18 * BLOCK_WIDTH)
+level = 0
 
-del _
-
-level = 52
+screen: pygame.Surface = pygame.display.set_mode(size=(WIDTH, HEIGHT))
+pygame.display.set_caption(title=TITLE)
+clock = pygame.time.Clock()
+playBgMusic()
 
 blocks: list[list[Optional[block.Block]]] = loadLevels.loadLevels(level)
 
@@ -31,17 +33,33 @@ def update():
                 if b.frameCount > 1:
                     b.addFrame()
 
-bg = getBg.getBg(level, WIDTH, HEIGHT) # type: ignore
+bg = getBg(level, WIDTH, HEIGHT)
 
 def draw():
-    screen.clear() # type: ignore
-    screen.blit(bg, (0,0)) # type: ignore
+    screen.fill((0, 0, 0))
+    screen.blit(bg, (0,0))
     for _ in blocks:
         for tile in _:
             if tile:
-                tile.draw(screen) # type: ignore
+                tile.draw(screen)
+    drawBg(screen, level)
 
-pygame.mixer.music.load("data/the fiber 16x loop.wav")
-pygame.mixer.music.play(-1)
-            
-pgzrun.go()
+running = True
+def events():
+    global running
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            running = False
+        elif event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_ESCAPE:
+                running = False
+while running:
+    dt: float = clock.tick(60) / 1000.0
+
+    events()
+
+    update()
+
+    draw()
+
+    pygame.display.flip()
