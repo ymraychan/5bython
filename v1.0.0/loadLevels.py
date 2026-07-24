@@ -21,5 +21,3 @@ def loadLevels(level: int) -> list[list[Optional[block.Block]]]:
 
                 blocks[i][j] = block.Block(level=level, name=f"{l[i][j*2]}{l[i][j*2+1]}", x=x, y=y)
     return blocks
-            
-loadLevels(0)

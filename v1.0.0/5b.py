@@ -4,8 +4,7 @@ os.environ['SDL_VIDEO_CENTERED'] = '1'
 import pygame
 import loadLevels
 import block
-from bg.getBg import getBg
-from bg.drawBg import drawBg
+import draw
 from music import playBgMusic
 from typing import Final, Optional
 
@@ -24,8 +23,7 @@ pygame.display.set_caption(title=TITLE)
 clock = pygame.time.Clock()
 playBgMusic()
 
-blocks: list[list[Optional[block.Block]]] = loadLevels.loadLevels(level)
-
+blocks: list[list[block.Block | None]] = loadLevels.loadLevels(level)
 def update():
     for _ in blocks:
         for b in _:
@@ -33,16 +31,6 @@ def update():
                 if b.frameCount > 1:
                     b.addFrame()
 
-bg = getBg(level, WIDTH, HEIGHT)
-
-def draw():
-    screen.fill((0, 0, 0))
-    screen.blit(bg, (0,0))
-    for _ in blocks:
-        for tile in _:
-            if tile:
-                tile.draw(screen)
-    drawBg(screen, level)
 
 running = True
 def events():
@@ -60,6 +48,6 @@ while running:
 
     update()
 
-    draw()
+    draw.draw(screen, level, WIDTH, HEIGHT, blocks)
 
     pygame.display.flip()

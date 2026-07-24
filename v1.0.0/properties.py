@@ -151,7 +151,7 @@ blockProperties: Final[list[list]] = [
     [False,True,False,False,False,False,False,False,True,False,False,0,2,False,False,True,1,False],
     [False,False,False,False,False,False,False,False,True,False,False,0,2,False,False,True,1,False],
 ]
-doorLightX: Final[list[list[int]]] = [
+doorLightX: Final[list[list[float]]] = [
     [27.5],
     [15, 40],
     [10, 27.5, 45],
