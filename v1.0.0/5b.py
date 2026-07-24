@@ -28,8 +28,7 @@ def update():
     for _ in blocks:
         for b in _:
             if b:
-                if b.frameCount > 1:
-                    b.addFrame()
+                b.addFrame()
 
 
 running = True
