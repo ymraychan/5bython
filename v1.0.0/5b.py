@@ -7,6 +7,8 @@ import block
 import draw
 from music import playBgMusic
 from typing import Final, Optional
+from entity import Entity
+import loadEntities
 
 pygame.init()
 
@@ -21,9 +23,11 @@ level = 0
 screen: pygame.Surface = pygame.display.set_mode(size=(WIDTH, HEIGHT))
 pygame.display.set_caption(title=TITLE)
 clock = pygame.time.Clock()
-playBgMusic()
+# playBgMusic()
 
 blocks: list[list[block.Block | None]] = loadLevels.loadLevels(level)
+entities: list[Entity] = loadEntities.loadEntities(level)
+
 def update():
     for _ in blocks:
         for b in _:
@@ -47,6 +51,6 @@ while running:
 
     update()
 
-    draw.draw(screen, level, WIDTH, HEIGHT, blocks)
+    draw.draw(screen, level, WIDTH, HEIGHT, blocks, entities)
 
     pygame.display.flip()

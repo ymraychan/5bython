@@ -5,3 +5,4 @@ Port everything to pygame instead of pygame zero
 Animated tiles are problematic, working on a fix
 Fix bug with animated tiles and fix frame drops
 Add cache, not implemented
+Remove unnecessary cache and implement entity loading
