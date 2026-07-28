@@ -17,7 +17,6 @@ class Block:
     y: Final[int]
     doorLightX: Final[list[list[float]]] = properties.doorLightX
     level: int
-    __cache: dict[int, list[pygame.Surface]] = {}
     
     def returnPath(self) -> str:
         p: str = ""
