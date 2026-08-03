@@ -2,6 +2,7 @@ import pygame
 from scipy import ndimage
 import numpy as np
 from typing import Final
+import properties
 
 class Entity:
     id: int
@@ -18,6 +19,8 @@ class Entity:
     vx: float
     vy: float
     collide: tuple[bool, bool, bool, bool] # hit ceiling, hit ground, hit left wall, hit right wall
+    properties: Final[list]
+    charModel: Final[dict]
     @staticmethod
     def transformMat(surf: pygame.Surface, a: float, b: float, c: float, d: float, tx: float, ty: float) -> pygame.Surface:
         surfArr = pygame.surfarray.array3d(surf)
@@ -25,10 +28,8 @@ class Entity:
         mat2d = np.linalg.inv([[a, c], [b, d]])
         matrix = np.eye(3)
         matrix[:2, :2] = mat2d
-        surfOffset = (tx, ty, 0)
-        alphaOffset = (tx, ty)
-        surfTransformed = ndimage.affine_transform(surfArr, matrix, offset=surfOffset, order=1) # type: ignore
-        alphaTransformed = ndimage.affine_transform(alphaArr, mat2d, offset=alphaOffset, order=1) # type: ignore
+        surfTransformed = ndimage.affine_transform(surfArr, matrix, order=1) # type: ignore
+        alphaTransformed = ndimage.affine_transform(alphaArr, mat2d, order=1) # type: ignore
         outSurf = pygame.Surface(surfTransformed.shape[:2], flags=pygame.SRCALPHA)
         pygame.surfarray.blit_array(outSurf, surfTransformed)
         pygame.surfarray.pixels_alpha(outSurf)[:] = alphaTransformed
@@ -40,21 +41,25 @@ class Entity:
         self.state = state
         self.movementStr = movementStr
         self.path = f"images/entities/e{id:04d}.png"
-        # self.surf = self.transformMat(pygame.image.load(self.path).convert_alpha(), 0.12158203125, -0.0020751953125, 0.0037384033203125, 0.12152099609375, 0.1, 0.4)
-        # self.surf = pygame.image.load(self.path)
-        surf = self.transformMat(pygame.image.load(self.path).convert_alpha(), 1, 0, 0, 1, 0, 0)
-        self.mat = (1, 0, 0, 1)
-        self.tx = 1.15
-        self.ty = -8.95
+        self.charModel = properties.charModels[self.id]
+        surf = self.transformMat(pygame.image.load(self.path).convert_alpha(), *self.charModel["torsomat"].values())
+        self.mat = tuple(list(self.charModel["torsomat"].values())[:4])
+        self.tx, self.ty = list(self.charModel["torsomat"].values())[4:6]
         surf = pygame.transform.scale(surf, (surf.get_width()//self.scaleFactor, surf.get_height()//self.scaleFactor))
         self.surf = surf
         self.vx = 0
         self.vy = 0
         self.collide = (False, False, False, False)
-        # TODO: Load values dynamincally
+        self.properties = properties.charD[self.id]
 
     def draw(self, screen: pygame.Surface) -> None:
         if self.surf is not None:
-            screen.blit(self.surf, (self.x * 30, self.y * 30))
+            rect = self.surf.get_rect()
+            rect.midbottom=(int(self.x * 30), int(self.y * 30))
+            screen.blit(self.surf, rect)
+
+    def update(self, screen: pygame.Surface, keysPressed: pygame.key.ScancodeWrapper, keysInstant: list[pygame.event.Event]) -> None:
+        # TODO: update 
+        pass
 
 
