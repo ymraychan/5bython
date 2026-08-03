@@ -8,12 +8,12 @@ font = pygame.font.Font("fonts/helveticabold.ttf", 32)
 
 __cache: dict[str, Any] = {}
 
-def getBgSurf(level: int, width: int, height: int) -> pygame.surface.Surface:
+def getBgSurf(level: int) -> pygame.Surface:
     global __cache
     if __cache.get("bgSurf") is None or __cache.get("level") != level:
         __cache["level"] = level
         bgId: int = getLevelBgId(level)
-        __cache["bgSurf"] = pygame.transform.scale(pygame.image.load(f"images/bg/bg{bgId:04d}.png"), (width, height)).convert()
+        __cache["bgSurf"] = pygame.transform.scale(pygame.image.load(f"images/bg/bg{bgId:04d}.png"), (960, 540)).convert()
     return __cache["bgSurf"]
 
 def getLevelTextSurf(level: int) -> pygame.Surface:
