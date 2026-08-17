@@ -1,14 +1,14 @@
 from typing import Final, Any
 
 import pygame
-from getLevels import charToCode
+from getLevels import charToCode, getLevelBgId
 import properties
 class Block:
     blockProperties: Final[list[list[Any]]] = properties.blockProperties
     id: Final[int]
     path: str
     info: Final[list[Any]]
-    frame: int = 0
+    frame: int
     frameCount: int
     image: pygame.Surface
     frames: list[pygame.Surface]
@@ -56,12 +56,16 @@ class Block:
             self.frames = self.__loadFrames()
 
     def draw(self, screen: pygame.Surface) -> None:
-        if self.frameCount == 0:
-            return
         if self.id == 6: self.drawDoor(screen)
+        if self.frameCount == 0: return
         else:
             screen.blit(self.image, self.rect)
 
+    def drawDoorLights(self, screen: pygame.Surface):
+        pass
+
     def drawDoor(self, screen: pygame.Surface) -> None:
+        doorColor: tuple[int, int, int] = (153, 153, 153) if getLevelBgId(self.level) == 9 or getLevelBgId(self.level) == 10 else (80, 80, 80)
         door=pygame.Rect((self.x-30), (self.y-90), 60, 120)
         pygame.draw.rect(screen, (80, 80, 80), door)
+        self.drawDoorLights(screen)

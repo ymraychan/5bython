@@ -1,5 +1,25 @@
 from typing import Final
 
+# [0]  - collide down
+# [1]  - collide up
+# [2]  - collide right
+# [3]  - collide left
+# [4]  - hurts down
+# [5]  - hurts up
+# [6]  - hurts right
+# [7]  - hurts left
+# [8]  - uses movieclip
+# [9]  - fill tool not allowed in lc
+# [10] - uses shadows
+# [11] - switches for
+# [12] - switched by
+# [13] - uses borders
+# [14] - is liquid
+# [15] - availible in level creator
+# [16] - animation frames
+# [17] - loop?
+# [18] - loop frame order
+
 blockProperties: Final[list[list]] = [
     # tile0
     [False,False,False,False,False,False,False,False,False,False,False,0,0,False,False,True,0,False],
