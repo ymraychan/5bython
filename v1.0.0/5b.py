@@ -20,9 +20,9 @@ pygame.display.set_caption(title=TITLE)
 clock = pygame.time.Clock()
 playBgMusic()
 
-level: Level = Level(0)
-
 running = True
+
+level: Level = Level(0)
 
 def events():
     global running

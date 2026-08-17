@@ -2,10 +2,10 @@ import block
 import getLevels
 from typing import Optional
 
-def loadLevels(level: int) -> list[list[Optional[block.Block]]]:
-    blocks: list[list[Optional[block.Block]]] = []
+def loadLevels(level: int) -> list[list[block.Block]]:
+    blocks: list[list[block.Block]] = []
     for _ in range(getLevels.getLevelHeight(level)):
-        blocks.append([None] * getLevels.getLevelWidth(level))
+        blocks.append([block.Block(0, 0, 0, name=".")] * getLevels.getLevelWidth(level))
     l = getLevels.getLevelBlocks(level)
     for i in range(getLevels.getLevelHeight(level)):
         if getLevels.getLevelBlockMode(level) == "L":
