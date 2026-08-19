@@ -7,3 +7,4 @@ Fix bug with animated tiles and fix frame drops
 Add cache, not implemented
 Remove unnecessary cache and implement entity loading
 Add borders
+Add javascript file for reading purposes
