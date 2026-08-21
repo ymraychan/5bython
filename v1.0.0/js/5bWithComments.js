@@ -3468,17 +3468,17 @@ function drawLevel(context) {
 	}
 }
 
-function drawCharacters(context) {
-	for (let d = 0; d < (charCount + 1) * 2; d++) {
+function drawCharacters(context) { // Draws characters?
+	for (let d = 0; d < (charCount + 1) * 2; d++) { // Loops over characters?
 		let i = charDepths[d];
 		if (i < 0) continue;
-		let currCharID = char[i].id;
+		let currCharID = char[i].id; // Get ID
 		if (char[i].charState > 1 && typeof svgChars[currCharID] !== 'undefined') {
 			// Draw Burst
 			if (char[i].burstFrame >= 0) {
-				context.save();
-				let burstImg = svgBurst[char[i].burstFrame];
-				let burstmat = charModels[char[i].id].burstmat;
+				context.save(); // Take snapshot of context
+				let burstImg = svgBurst[char[i].burstFrame]; // Get burst img
+				let burstmat = charModels[char[i].id].burstmat; // Get burst matrix...
 				context.transform(
 					burstmat.a,
 					burstmat.b,
@@ -3486,16 +3486,16 @@ function drawCharacters(context) {
 					burstmat.d,
 					burstmat.tx + char[i].x,
 					burstmat.ty + char[i].y
-				);
-				context.drawImage(burstImg, -burstImg.width / (scaleFactor*2), -burstImg.height / (scaleFactor*2), burstImg.width / scaleFactor, burstImg.height / scaleFactor);
-				context.restore();
+				); // Transform the context
+				context.drawImage(burstImg, -burstImg.width / (scaleFactor*2), -burstImg.height / (scaleFactor*2), burstImg.width / scaleFactor, burstImg.height / scaleFactor); // Draw the img
+				context.restore(); // Restore context
 
-				char[i].burstFrame++;
+				char[i].burstFrame++; // Add burstframe?
 				if (char[i].burstFrame > svgBurst.length - 1) char[i].burstFrame = -1;
 			}
 
-			context.save();
-			if (char[i].charState >= 3) {
+			context.save(); // Snapshot context
+			if (char[i].charState >= 3) { // What?
 				if (qTimer > 0 || char[i].justChanged >= 1) {
 					var littleJump = 0;
 					if (i == control && qTimer > 0) {
@@ -3561,10 +3561,10 @@ function drawCharacters(context) {
 					}
 				}
 			} else {
-				let model = charModels[char[i].id];
+				let model = charModels[char[i].id]; // Init model
 
 				// If we're not bubble dying, draw the legs.
-				if (!(char[i].id == 5 && Math.floor(char[i].frame / 2) == 4)) {
+				if (!(char[i].id == 5 && Math.floor(char[i].frame / 2) == 4)) { // If dying???
 					// TODO: remove hard-coded numbers
 					// TODO: make the character's leg frames an array and loop through them here...
 					// ... or just make them one variable instead of two. whichever one I feel like doing at the time ig.
