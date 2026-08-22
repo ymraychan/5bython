@@ -3,6 +3,7 @@ from scipy import ndimage
 import numpy as np
 from typing import Final
 import properties
+import sys
 
 class Entity:
     id: int
@@ -21,6 +22,7 @@ class Entity:
     collide: tuple[bool, bool, bool, bool] # hit ceiling, hit ground, hit left wall, hit right wall
     properties: Final[list]
     charModel: Final[dict]
+    rect: pygame.FRect
     @staticmethod
     def transformMat(surf: pygame.Surface, a: float, b: float, c: float, d: float, tx: float, ty: float) -> pygame.Surface:
         surfArr = pygame.surfarray.array3d(surf)
@@ -42,15 +44,29 @@ class Entity:
         self.movementStr = movementStr
         self.path = f"images/entities/e{id:04d}.png"
         self.charModel = properties.charModels[self.id]
-        surf = self.transformMat(pygame.image.load(self.path).convert_alpha(), *self.charModel["torsomat"].values())
-        self.mat = tuple(list(self.charModel["torsomat"].values())[:4])
-        self.tx, self.ty = list(self.charModel["torsomat"].values())[4:6]
-        surf = pygame.transform.scale(surf, (surf.get_width()//self.scaleFactor, surf.get_height()//self.scaleFactor))
-        self.surf = surf
+        surf = pygame.image.load(self.path).convert_alpha()
         self.vx = 0
         self.vy = 0
         self.collide = (False, False, False, False)
         self.properties = properties.charD[self.id]
+        if id > 34:
+            if self.properties[7] == 1:
+                # draw static image
+                self.surf = surf
+            else:
+                # draw anim image
+                pass
+        else:
+            try:
+                surf = self.transformMat(surf, *self.charModel["torsomat"].values())
+                self.mat = tuple(list(self.charModel["torsomat"].values())[:4])
+                self.tx, self.ty = list(self.charModel["torsomat"].values())[4:6]
+                surf = pygame.transform.scale(surf, (surf.get_width()//self.scaleFactor, surf.get_height()//self.scaleFactor))
+                self.surf = surf
+            except:
+                self.surf = surf
+                print(f"No torsomat for id: {id}", sys.stderr)
+        self.rect = pygame.FRect(0, 0, 0, 0) # TODO: Implement FRect
 
     def draw(self, screen: pygame.Surface) -> None:
         if self.surf is not None:

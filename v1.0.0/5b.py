@@ -16,13 +16,13 @@ WIDTH: Final[int] = min(pygame.display.get_desktop_sizes()[0][0], 32 * BLOCK_WID
 HEIGHT: Final[int] = min(pygame.display.get_desktop_sizes()[0][1], 18 * BLOCK_WIDTH)
 
 screen: pygame.Surface = pygame.display.set_mode(size=(WIDTH, HEIGHT))
-pygame.display.set_caption(title=TITLE)
+pygame.display.set_caption(TITLE)
 clock = pygame.time.Clock()
 playBgMusic()
 
 running = True
 
-level: Level = Level(0)
+level: Level = Level(5)
 
 def events():
     global running
