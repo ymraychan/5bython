@@ -54,9 +54,9 @@ def getCharAt(level: int, x_pos: int, y_pos: int) -> str:
     else:
         return getLevelBlocks(level)[y_pos][2*x_pos:2*x_pos+2]
 
-def charToCode(level: int, char: str) -> int:
+def charToCode(char: str) -> int:
     """ Convert the character to a unique code """
-    if getLevelBlockMode(level) == "L":
+    if len(char) == 1:
         n: int = ord(char)
         if n == 8364: return 93
         if n <= 126: return n - 46

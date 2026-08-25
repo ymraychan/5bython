@@ -22,11 +22,14 @@ playBgMusic()
 
 running = True
 
-level: Level = Level(5)
+level: Level = Level(1)
+
+keysInstant: list[pygame.Event] = []
 
 def events():
-    global running
-    for event in pygame.event.get():
+    global running, keysInstant
+    keysInstant = pygame.event.get()
+    for event in keysInstant:
         if event.type == pygame.QUIT:
             running = False
         elif event.type == pygame.KEYDOWN:
@@ -38,7 +41,6 @@ while running:
     events()
 
     keysPressed = pygame.key.get_pressed()
-    keysInstant = pygame.event.get()
 
     level.update(screen, keysPressed, keysInstant)
     level.draw(screen)

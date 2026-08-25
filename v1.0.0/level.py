@@ -23,7 +23,7 @@ class Level:
         for _ in self.blocks:
             for tile in _:
                 if tile:
-                    if tile.info[16] == 1:
+                    if tile.info[16] == 1 and tile.id != 6:
                         tile.draw(surf)
 
     def drawBorders(self, surf: pygame.Surface) -> None:
@@ -83,7 +83,7 @@ class Level:
         for _ in self.blocks:
             for tile in _:
                 if tile:
-                    if tile.info[16] > 1:
+                    if tile.info[16] > 1 or tile.id == 6:
                         tile.draw(surf)
 
 

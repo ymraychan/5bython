@@ -5,7 +5,7 @@ from getLevels import charToCode, getLevelBgId
 import properties
 class Block:
     blockProperties: Final[list[list[Any]]] = properties.blockProperties
-    id: Final[int]
+    id: int
     path: str
     info: Final[list[Any]]
     frame: int
@@ -40,7 +40,7 @@ class Block:
         self.image = self.frames[self.frame]
     
     def __init__(self, x: int, y: int, level: int, block_id: int=0, name: str="", frame: int=0) -> None:
-        self.id = charToCode(level, name) if block_id == 0 else block_id
+        self.id = charToCode(name) if block_id == 0 else block_id
             
         self.frame = frame
         self.frameCount = self.blockProperties[self.id][16]
@@ -48,7 +48,7 @@ class Block:
         self.info = self.blockProperties[self.id]
         self.image = pygame.image.load(f"images/{self.path}.png").convert_alpha()
         self.rect = self.image.get_rect()
-        self.rect.bottomleft = (x, y+30)
+        self.rect.bottomright = (x+30, y+30)
         self.x = x
         self.y = y
         self.level = level
@@ -56,7 +56,9 @@ class Block:
             self.frames = self.__loadFrames()
 
     def draw(self, screen: pygame.Surface) -> None:
-        if self.id == 6: self.drawDoor(screen)
+        if self.id == 6:
+            self.drawDoor(screen)
+            return
         if self.frameCount == 0: return
         else:
             screen.blit(self.image, self.rect)
@@ -67,5 +69,5 @@ class Block:
     def drawDoor(self, screen: pygame.Surface) -> None:
         doorColor: tuple[int, int, int] = (153, 153, 153) if getLevelBgId(self.level) == 9 or getLevelBgId(self.level) == 10 else (80, 80, 80)
         door=pygame.Rect((self.x-30), (self.y-90), 60, 120)
-        pygame.draw.rect(screen, (80, 80, 80), door)
+        pygame.draw.rect(screen, doorColor, door)
         self.drawDoorLights(screen)

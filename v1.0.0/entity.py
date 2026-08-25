@@ -23,6 +23,8 @@ class Entity:
     properties: Final[list]
     charModel: Final[dict]
     rect: pygame.FRect
+    __frame: int
+    __surfs: list[pygame.Surface]
     @staticmethod
     def transformMat(surf: pygame.Surface, a: float, b: float, c: float, d: float, tx: float, ty: float) -> pygame.Surface:
         surfArr = pygame.surfarray.array3d(surf)
@@ -42,20 +44,21 @@ class Entity:
         self.y = y
         self.state = state
         self.movementStr = movementStr
-        self.path = f"images/entities/e{id:04d}.png"
+        self.__frame = 0
+        self.properties = properties.charD[self.id]
+        self.path = f"images/entities/e{id:04d}.png" if self.properties[7] == 1 else f"images/entities/e{id:04d}f{self.__frame:04d}.png"
         self.charModel = properties.charModels[self.id]
         surf = pygame.image.load(self.path).convert_alpha()
         self.vx = 0
         self.vy = 0
         self.collide = (False, False, False, False)
-        self.properties = properties.charD[self.id]
+        self.__surfs = []
         if id > 34:
-            if self.properties[7] == 1:
-                # draw static image
-                self.surf = surf
-            else:
-                # draw anim image
-                pass
+            self.surf = surf
+            if self.properties[7] > 1:
+                for i in range(self.properties[7]):
+                    self.__surfs.append(pygame.image.load(f"images/entities/e{id:04d}f{self.__frame:04d}.png").convert_alpha())
+            self.tx = self.ty = 0
         else:
             try:
                 surf = self.transformMat(surf, *self.charModel["torsomat"].values())
@@ -65,17 +68,26 @@ class Entity:
                 self.surf = surf
             except:
                 self.surf = surf
-                print(f"No torsomat for id: {id}", sys.stderr)
+                self.tx = self.ty = 0
+                print(f"No torsomat for id: {id}", file=sys.stderr)
         self.rect = pygame.FRect(0, 0, 0, 0) # TODO: Implement FRect
 
     def draw(self, screen: pygame.Surface) -> None:
         if self.surf is not None:
             rect = self.surf.get_rect()
-            rect.midbottom=(int(self.x * 30), int(self.y * 30))
+            rect.midbottom=(int(self.x * 30) + self.tx, int(self.y * 30) + self.ty)
             screen.blit(self.surf, rect)
 
     def update(self, screen: pygame.Surface, keysPressed: pygame.key.ScancodeWrapper, keysInstant: list[pygame.event.Event]) -> None:
         # TODO: update 
-        pass
+        screen.blit(self.updateSurf(), dest=(self.x, self.y))
+    def updateSurf(self) -> pygame.Surface:
+        if self.id > 34 and self.properties[7] > 1:
+            self.__frame += 1
+            self.path = f"images/entities/e{self.id:04d}f{self.__frame:04d}.png"
+            self.__frame %= self.properties[7]
+            self.path = f"images/entities/e{self.id:04d}f{self.__frame:04d}.png"
+            self.surf = self.__surfs[self.__frame]
+        return self.surf
 
 
