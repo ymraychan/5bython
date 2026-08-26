@@ -22,7 +22,7 @@ playBgMusic()
 
 running = True
 
-level: Level = Level(1)
+level: Level = Level(51)
 
 keysInstant: list[pygame.Event] = []
 

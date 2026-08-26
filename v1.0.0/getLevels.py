@@ -95,6 +95,14 @@ def getEntityDat(level: int) -> list[tuple[int, float, float, int] | tuple[int, 
 
     return val
 
+def getLevelCharCount(level: int):
+    entities = getEntityDat(level)
+    count = 0
+    for entity in entities:
+        if entity[3] == 9 or entity[3] == 10:
+            count += 1
+
+    return count
 def getNumLinesDialouge(level: int) -> int:
     return int(getLevel(level).split("\n")[2+getLevelHeight(level)+getLevelNumEntities(level)])
 

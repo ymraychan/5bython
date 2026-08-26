@@ -1,7 +1,7 @@
 from typing import Final, Any
 
 import pygame
-from getLevels import charToCode, getLevelBgId
+from getLevels import charToCode, getLevelBgId, getLevelCharCount
 import properties
 class Block:
     blockProperties: Final[list[list[Any]]] = properties.blockProperties
@@ -17,6 +17,11 @@ class Block:
     y: Final[int]
     doorLightX: Final[list[list[float]]] = properties.doorLightX
     level: int
+
+
+    @staticmethod
+    def mapRange(value, min1, max1, min2, max2):
+        return min2 + ((value - min1) / (max1 - min1)) * (max2 - min2)
     
     def returnPath(self) -> str:
         p: str = ""
@@ -63,8 +68,12 @@ class Block:
         else:
             screen.blit(self.image, self.rect)
 
-    def drawDoorLights(self, screen: pygame.Surface):
-        pass
+    def drawDoorLights(self, screen: pygame.Surface) -> None:
+        entities: int = getLevelCharCount(self.level)
+        for i in range(entities):
+            rect = pygame.FRect(self.x - 30 + self.doorLightX[(entities-1) % 6 if i//6 == (entities-1)//6 else 5][i%6], \
+                                self.y - 80 + i // 6 * 10, 5, 5)
+            pygame.draw.rect(screen, (0, 0, 0), rect)
 
     def drawDoor(self, screen: pygame.Surface) -> None:
         doorColor: tuple[int, int, int] = (153, 153, 153) if getLevelBgId(self.level) == 9 or getLevelBgId(self.level) == 10 else (80, 80, 80)

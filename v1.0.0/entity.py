@@ -80,14 +80,11 @@ class Entity:
 
     def update(self, screen: pygame.Surface, keysPressed: pygame.key.ScancodeWrapper, keysInstant: list[pygame.event.Event]) -> None:
         # TODO: update 
-        screen.blit(self.updateSurf(), dest=(self.x, self.y))
-    def updateSurf(self) -> pygame.Surface:
+        screen.blit(self.surf, dest=(self.x, self.y))
+    def updateSurf(self) -> None:
         if self.id > 34 and self.properties[7] > 1:
             self.__frame += 1
             self.path = f"images/entities/e{self.id:04d}f{self.__frame:04d}.png"
             self.__frame %= self.properties[7]
             self.path = f"images/entities/e{self.id:04d}f{self.__frame:04d}.png"
             self.surf = self.__surfs[self.__frame]
-        return self.surf
-
-
