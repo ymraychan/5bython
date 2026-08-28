@@ -4,7 +4,7 @@ os.environ['SDL_VIDEO_CENTERED'] = '1'
 import pygame
 from music import playBgMusic
 from typing import Final, Optional
-from entity import Entity
+from entity.entity import Entity
 from level import Level
 
 pygame.init()
@@ -22,7 +22,7 @@ playBgMusic()
 
 running = True
 
-level: Level = Level(7)
+level: Level = Level(0)
 
 keysInstant: list[pygame.Event] = []
 

@@ -5,7 +5,7 @@ from loadLevels import loadLevels
 from getLevels import getLevelWidth, getLevelHeight
 import pygame
 from typing import Optional
-from entity import Entity
+from entity.entity import Entity
 from properties import blockProperties
 
 class Level:
