@@ -4,8 +4,9 @@ import numpy as np
 from typing import Final
 import properties
 import sys
+from entity import Entity
 
-class Entity:
+class MovingEntity(Entity):
     id: int
     x: float
     y: float
@@ -13,19 +14,16 @@ class Entity:
     movementStr: str
     path: str
     surf: pygame.Surface
-    scaleFactor: Final[int] = 3
     mat: tuple[float, float, float, float]
     tx: float
     ty: float
     vx: float
     vy: float
     collide: tuple[bool, bool, bool, bool] # hit ceiling, hit ground, hit left wall, hit right wall
-    properties: Final[list]
-    charModel: Final[dict]
     rect: pygame.FRect
     __frame: int
     __surfs: list[pygame.Surface]
-    __moveCount: int
+    __time: int
     @staticmethod
     def transformMat(surf: pygame.Surface, a: float, b: float, c: float, d: float, tx: float, ty: float) -> pygame.Surface:
         surfArr = pygame.surfarray.array3d(surf)
@@ -39,15 +37,11 @@ class Entity:
         pygame.surfarray.blit_array(outSurf, surfTransformed)
         pygame.surfarray.pixels_alpha(outSurf)[:] = alphaTransformed
         return outSurf
-    def __init__(self, id: int, x: float, y: float, state: int) -> None:
-        self.id = id
-        self.x = x
-        self.y = y
-        self.state = state
+    def __init__(self, id: int, x: float, y: float, state: int, movementStr: str) -> None:
+        super().__init__(id, x, y, state)
+        self.movementStr = movementStr
         self.__frame = 0
-        self.properties = properties.charD[self.id]
         self.path = f"images/entities/e{id:04d}.png" if self.properties[7] == 1 else f"images/entities/e{id:04d}f{self.__frame:04d}.png"
-        self.charModel = properties.charModels[self.id]
         surf = pygame.image.load(self.path).convert_alpha()
         self.vx = 0
         self.vy = 0
@@ -73,8 +67,7 @@ class Entity:
                 self.tx = self.ty = 0
                 print(f"No torsomat for id: {id}", file=sys.stderr)
         self.rect = pygame.FRect(0, 0, 0, 0) # TODO: Implement FRect
-        self.__movementPlace = 2
-        self.__moveCount = 0
+        self.__time = 0
 
     def draw(self, screen: pygame.Surface) -> None:
         if self.surf is not None:
@@ -83,5 +76,27 @@ class Entity:
             screen.blit(self.surf, rect)
 
     def update(self, screen: pygame.Surface, keysPressed: pygame.key.ScancodeWrapper, keysInstant: list[pygame.event.Event]) -> None:
-        # TODO: update
-        pass
+        self.__time += 1
+        self.updateSurf()
+        self.updatePos()
+    def updateSurf(self) -> None:
+        if self.id > 34 and self.properties[7] > 1:
+            self.__frame += 1
+            self.__frame %= self.properties[7]
+            self.path = f"images/entities/e{self.id:04d}f{self.__frame:04d}.png"
+            self.surf = self.__surfs[self.__frame]
+    def updatePos(self) -> None:
+        string = self.movementStr[2:]
+        rspeed = int(self.movementStr[:2])
+        if self.__time >= len(string) * rspeed:
+            self.__time = 0
+        speed = 1 / rspeed
+        pos = int(string[(self.__time // (rspeed)) % len(string)])
+        if pos == 0:
+            self.y -= speed
+        if pos == 1:
+            self.y += speed
+        if pos == 2:
+            self.x -= speed
+        if pos == 3:
+            self.x += speed

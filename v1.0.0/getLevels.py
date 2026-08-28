@@ -56,15 +56,16 @@ def getCharAt(level: int, x_pos: int, y_pos: int) -> str:
 
 def charToCode(char: str) -> int:
     """ Convert the character to a unique code """
+    n: int = 0
     if len(char) == 1:
-        n: int = ord(char)
+        n = ord(char)
         if n == 8364: return 93
         if n <= 126: return n - 46
         if n <= 182: return n - 80
         return n - 81
     else:
         if char[0] == ".":
-            n: int = ord(char[1])
+            n = ord(char[1])
             if n == 8364: return 93
             if n <= 126: return n - 46
             if n <= 182: return n - 80
@@ -106,5 +107,5 @@ def getLevelCharCount(level: int):
 def getNumLinesDialouge(level: int) -> int:
     return int(getLevel(level).split("\n")[2+getLevelHeight(level)+getLevelNumEntities(level)])
 
-def getDialouge(level: int) -> list[tuple[int, str, str]]:
-    ...
+def getDialouge(level: int) -> list[tuple[int, str, str]]: # type: ignore
+    pass
