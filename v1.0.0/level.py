@@ -1,8 +1,7 @@
 from block import Block
-import getSurf
 from loadEntities import loadEntities
 from loadLevels import loadLevels
-from getLevels import getLevelWidth, getLevelHeight
+from getLevels import getLevelWidth, getLevelHeight, getLevelBgId, getLevelName
 import pygame
 from typing import Optional
 from entity.entity import Entity
@@ -72,8 +71,8 @@ class Level:
         self.drawBorders(self.staticBlockSurf)
         self.cameraX = 0 # TODO: Implement camera
         self.cameraY = 0 # TODO: Implement camera
-        self.bgSurf = getSurf.getBgSurf(self.lvlId)
-        self.textSurf = getSurf.getLevelTextSurf(self.lvlId)
+        self.bgSurf = pygame.transform.scale(pygame.image.load(f"images/bg/bg{getLevelBgId(lvlId):04d}.png"), (960, 540)).convert()
+        self.textSurf = pygame.font.Font("fonts/helveticabold.ttf", 32).render(f"{lvlId+1:03d}. {getLevelName(lvlId)}", True, (255, 255, 255)).convert_alpha()
 
     def drawBg(self, surf: pygame.Surface) -> None:
         surf.blit(self.bgSurf, (0, 0))

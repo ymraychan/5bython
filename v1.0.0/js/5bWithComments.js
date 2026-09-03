@@ -13,6 +13,8 @@ performanceTest(()=>{
 // 	}
 // }
 
+// dire stands for direction
+
 let canvasReal;
 let ctxReal;
 let canvas;

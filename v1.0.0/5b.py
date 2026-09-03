@@ -3,26 +3,28 @@ os.environ['SDL_VIDEO_CENTERED'] = '1'
 
 import pygame
 from music import playBgMusic
-from typing import Final, Optional
-from entity.entity import Entity
-from level import Level
+from typing import Final, Literal
 
 pygame.init()
+
+pygame.font.init()
 
 TITLE: Final[str] = 'BFDIA 5b'
 BLOCK_WIDTH: Final[int] = 30
 
-WIDTH: Final[int] = min(pygame.display.get_desktop_sizes()[0][0], 32 * BLOCK_WIDTH)
-HEIGHT: Final[int] = min(pygame.display.get_desktop_sizes()[0][1], 18 * BLOCK_WIDTH)
+WIDTH: Final[Literal[960]] = 960
+HEIGHT: Final[Literal[540]] = 540
 
 screen: pygame.Surface = pygame.display.set_mode(size=(WIDTH, HEIGHT))
 pygame.display.set_caption(TITLE)
 clock = pygame.time.Clock()
 playBgMusic()
 
+from game import Game
+
 running = True
 
-level: Level = Level(0)
+game: Game = Game()
 
 keysInstant: list[pygame.Event] = []
 
@@ -42,7 +44,7 @@ while running:
 
     keysPressed = pygame.key.get_pressed()
 
-    level.update(screen, keysPressed, keysInstant)
-    level.draw(screen)
+    game.update(screen, keysPressed, keysInstant)
+    game.draw(screen)
 
     pygame.display.flip()

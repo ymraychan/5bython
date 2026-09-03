@@ -5,7 +5,7 @@ from typing import Final
 import properties
 import sys
 
-class Entity:
+class Entity(pygame.sprite.Sprite):
     id: int
     x: float
     y: float
@@ -19,12 +19,9 @@ class Entity:
     ty: float
     vx: float
     vy: float
-    properties: Final[list]
+    properties: Final[list[int | float | bool]]
     charModel: Final[dict]
-    rect: pygame.FRect
-    __frame: int
-    __surfs: list[pygame.Surface]
-    __moveCount: int
+    hitbox: pygame.FRect
     @staticmethod
     def transformMat(surf: pygame.Surface, a: float, b: float, c: float, d: float, tx: float, ty: float) -> pygame.Surface:
         surfArr = pygame.surfarray.array3d(surf)
@@ -32,8 +29,8 @@ class Entity:
         mat2d = np.linalg.inv([[a, c], [b, d]])
         matrix = np.eye(3)
         matrix[:2, :2] = mat2d
-        surfTransformed = ndimage.affine_transform(surfArr, matrix, order=1) # type: ignore
-        alphaTransformed = ndimage.affine_transform(alphaArr, mat2d, order=1) # type: ignore
+        surfTransformed = ndimage.affine_transform(surfArr, matrix, order=1)
+        alphaTransformed = ndimage.affine_transform(alphaArr, mat2d, order=1)
         outSurf = pygame.Surface(surfTransformed.shape[:2], flags=pygame.SRCALPHA)
         pygame.surfarray.blit_array(outSurf, surfTransformed)
         pygame.surfarray.pixels_alpha(outSurf)[:] = alphaTransformed
@@ -48,17 +45,17 @@ class Entity:
         self.path = f"images/entities/e{id:04d}.png" if self.properties[7] == 1 else f"images/entities/e{id:04d}f{self.__frame:04d}.png"
         self.charModel = properties.charModels[self.id]
         surf = pygame.image.load(self.path).convert_alpha()
-        self.vx = 0
-        self.vy = 0
+        self.vx = 0.0
+        self.vy = 0.0
         self.__surfs = []
         if id > 34:
             self.surf = surf
             if self.properties[7] > 1:
-                for i in range(self.properties[7]):
+                for i in range(int(self.properties[7])):
                     self.__surfs.append(pygame.image.load(f"images/entities/e{id:04d}f{self.__frame:04d}.png").convert_alpha())
                     self.__frame += 1
                 self.__frame = 0
-            self.tx = self.ty = 0
+            self.tx = self.ty = 0.0
         else:
             try:
                 surf = self.transformMat(surf, *self.charModel["torsomat"].values())
@@ -68,15 +65,18 @@ class Entity:
                 self.surf = surf
             except:
                 self.surf = surf
-                self.tx = self.ty = 0
+                self.tx = self.ty = 0.0
                 print(f"No torsomat for id: {id}", file=sys.stderr)
-        self.rect = self.surf.get_frect()
+        self.hitbox = self.surf.get_frect()
 
     def draw(self, screen: pygame.Surface) -> None:
-        screen.blit(self.surf, self.rect)
+        screen.blit(self.surf, self.hitbox)
+
+    def drawHitbox(self, screen: pygame.Surface) -> None:
+        pygame.draw.rect(screen, (255, 0, 0), self.hitbox, width=2)
 
     def update(self, screen: pygame.Surface, keysPressed: pygame.key.ScancodeWrapper, keysInstant: list[pygame.event.Event]) -> None:
         self.updateRect()
 
     def updateRect(self) -> None:
-        self.rect.midbottom = (int(self.x * 30) + self.tx, int(self.y * 30) + self.ty)
+        self.hitbox.midbottom = (int(self.x * 30) + self.tx, int(self.y * 30) + self.ty)

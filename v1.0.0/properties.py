@@ -1146,7 +1146,7 @@ charModels: Final[list[dict]] = [
 # [8] - has arms
 # [9] - default state (in level creator)
 
-charD: Final[list] = [
+charD: Final[list[list[int | float | bool]]] = [
 	[28,45.4,0.45,27,0.8,False,1,1,True,10],
 	[23,56,0.36,31,0.8,False,1.7,1,True,10],
 	[20,51,0.41,20,0.85,False,5,1,False,10],

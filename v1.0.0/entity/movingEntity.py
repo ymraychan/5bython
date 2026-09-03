@@ -14,7 +14,7 @@ class MovingEntity(Entity):
     ty: float
     vx: float
     vy: float
-    rect: pygame.FRect
+    hitbox: pygame.FRect
     __frame: int
     __surfs: list[pygame.Surface]
     __time: int
@@ -26,9 +26,9 @@ class MovingEntity(Entity):
 
     def draw(self, screen: pygame.Surface) -> None:
         if self.surf is not None:
-            rect = self.surf.get_rect()
-            rect.midbottom=(int(self.x * 30) + self.tx, int(self.y * 30) + self.ty)
-            screen.blit(self.surf, rect)
+            hitbox = self.surf.get_rect()
+            hitbox.midbottom=(int(self.x * 30) + self.tx, int(self.y * 30) + self.ty)
+            screen.blit(self.surf, hitbox)
 
     def update(self, screen: pygame.Surface, keysPressed: pygame.key.ScancodeWrapper, keysInstant: list[pygame.event.Event]) -> None:
         self.__time += 1
@@ -38,11 +38,11 @@ class MovingEntity(Entity):
     def updateSurf(self) -> None:
         if self.id > 34 and self.properties[7] > 1:
             self.__frame += 1
-            self.__frame %= self.properties[7]
+            self.__frame %= int(self.properties[7])
             self.path = f"images/entities/e{self.id:04d}f{self.__frame:04d}.png"
             self.surf = self.__surfs[self.__frame]
     def updateVelocity(self) -> None:
-        self.vx = self.vy = 0
+        self.vx = self.vy = 0.0
         string = self.movementStr[2:]
         rspeed = int(self.movementStr[:2])
         if self.__time >= len(string) * rspeed:
@@ -61,5 +61,5 @@ class MovingEntity(Entity):
         self.updateVelocity()
         self.x += self.vx
         self.y += self.vy
-        self.rect.x += self.vx * 30
-        self.rect.y += self.vy * 30
+        self.hitbox.x += self.vx * 30
+        self.hitbox.y += self.vy * 30
