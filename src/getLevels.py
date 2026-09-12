@@ -1,4 +1,3 @@
-from typing import Any
 import re
 
 levelString = open("data/levels.txt", encoding="utf-8").read()

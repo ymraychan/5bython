@@ -1,16 +1,15 @@
 from block import Block
-from loadEntities import loadEntities
-from loadLevels import loadLevels
-from getLevels import getLevelWidth, getLevelHeight, getLevelBgId, getLevelName
+from getLevels import *
 import pygame
-from typing import Optional
 from entity.entity import Entity
+from entity.character import Character
+from entity.movingEntity import MovingEntity
 from properties import blockProperties
 
 class Level:
     lvlId: int
     blocks: list[list[Block]]
-    borderimg: list[pygame.Surface] = [pygame.image.load(f"./images/borders/tb{_:04d}.png") for _ in range(38)]
+    borderimg: list[pygame.Surface] = [pygame.image.load(f"visuals/borders/tb{_:04d}.png") for _ in range(38)]
     bgSurf: pygame.Surface
     textSurf: pygame.Surface
     staticBlockSurf: pygame.Surface
@@ -61,17 +60,49 @@ class Level:
                 if not bottomEmpty and not leftEmpty and isEmpty(i + 1, j - 1):
                     surf.blit(self.borderimg[37], (j * 30, i * 30))
 
+    def loadEntities(self) -> list[Entity]:
+        raw: list[tuple[int, float, float, int] | tuple[int, float, float, int, str]] = getEntityDat(self.lvlId)
+        listEntities: list[Entity] = []
+        for entity in raw:
+            match entity:
+                case (id, x, y, state):
+                    e = Character(id, x, y, state, self.lvlId, self.blocks)
+                case (id, x, y, state, movementStr):
+                    e = MovingEntity(id, x, y, state, movementStr)
+            
+            listEntities.append(e)
+        return listEntities
+
+    def loadBlocks(self) -> list[list[Block]]:
+        blocks: list[list[Block]] = []
+        for _ in range(getLevelHeight(self.lvlId)):
+            blocks.append([Block(0, 0, 0, name=".")] * getLevelWidth(self.lvlId))
+        l = getLevelBlocks(self.lvlId)
+        for i in range(getLevelHeight(self.lvlId)):
+            if getLevelBlockMode(self.lvlId) == "L":
+                for j in range(getLevelWidth(self.lvlId)):
+                    x = j*30
+                    y = i*30
+
+                    blocks[i][j] = Block(level=self.lvlId, name=l[i][j], x=x, y=y)
+            else:
+                for j in range(getLevelWidth(self.lvlId)):
+                    x = j*30
+                    y = i*30
+
+                    blocks[i][j] = Block(level=self.lvlId, name=f"{l[i][j*2]}{l[i][j*2+1]}", x=x, y=y)
+        return blocks
 
     def __init__(self, lvlId: int) -> None:
         self.lvlId = lvlId
-        self.blocks = loadLevels(lvlId)
-        self.entities = loadEntities(lvlId)
+        self.blocks = self.loadBlocks()
+        self.entities = self.loadEntities()
         self.staticBlockSurf = pygame.Surface((getLevelWidth(lvlId)*30, getLevelHeight(lvlId)*30), pygame.SRCALPHA)
         self.drawStaticBlocks(self.staticBlockSurf)
         self.drawBorders(self.staticBlockSurf)
         self.cameraX = 0 # TODO: Implement camera
         self.cameraY = 0 # TODO: Implement camera
-        self.bgSurf = pygame.transform.scale(pygame.image.load(f"images/bg/bg{getLevelBgId(lvlId):04d}.png"), (960, 540)).convert()
+        self.bgSurf = pygame.transform.scale(pygame.image.load(f"visuals/bg/bg{getLevelBgId(lvlId):04d}.png"), (960, 540)).convert()
         self.textSurf = pygame.font.Font("fonts/helveticabold.ttf", 32).render(f"{lvlId+1:03d}. {getLevelName(lvlId)}", True, (255, 255, 255)).convert_alpha()
 
     def drawBg(self, surf: pygame.Surface) -> None:

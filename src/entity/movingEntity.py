@@ -2,19 +2,7 @@ import pygame
 from entity.entity import Entity
 
 class MovingEntity(Entity):
-    id: int
-    x: float
-    y: float
-    state: int
     movementStr: str
-    path: str
-    surf: pygame.Surface
-    mat: tuple[float, float, float, float]
-    tx: float
-    ty: float
-    vx: float
-    vy: float
-    hitbox: pygame.FRect
     __frame: int
     __surfs: list[pygame.Surface]
     __time: int
@@ -27,7 +15,7 @@ class MovingEntity(Entity):
     def draw(self, screen: pygame.Surface) -> None:
         if self.surf is not None:
             hitbox = self.surf.get_rect()
-            hitbox.midbottom=(int(self.x * 30) + self.tx, int(self.y * 30) + self.ty)
+            hitbox.midbottom=(int(self.pos.x * 30) + self.tx, int(self.pos.y * 30) + self.ty)
             screen.blit(self.surf, hitbox)
 
     def update(self, screen: pygame.Surface, keysPressed: pygame.key.ScancodeWrapper, keysInstant: list[pygame.event.Event]) -> None:
@@ -42,7 +30,7 @@ class MovingEntity(Entity):
             self.path = f"images/entities/e{self.id:04d}f{self.__frame:04d}.png"
             self.surf = self.__surfs[self.__frame]
     def updateVelocity(self) -> None:
-        self.vx = self.vy = 0.0
+        self.velocity.update(self.nullVector)
         string = self.movementStr[2:]
         rspeed = int(self.movementStr[:2])
         if self.__time >= len(string) * rspeed:
@@ -50,16 +38,15 @@ class MovingEntity(Entity):
         speed = 1 / rspeed
         pos = int(string[(self.__time // (rspeed)) % len(string)])
         if pos == 0:
-            self.vy = speed * -1
+            self.velocity.y = speed * -1
         if pos == 1:
-            self.vy = speed
+            self.velocity.y = speed
         if pos == 2:
-            self.vx = speed * -1
+            self.velocity.x = speed * -1
         if pos == 3:
-            self.vx = speed
+            self.velocity.x = speed
     def updatePos(self) -> None:
         self.updateVelocity()
-        self.x += self.vx
-        self.y += self.vy
-        self.hitbox.x += self.vx * 30
-        self.hitbox.y += self.vy * 30
+        self.pos += self.velocity
+        self.hitbox.x += self.velocity.x * 30
+        self.hitbox.y += self.velocity.y * 30

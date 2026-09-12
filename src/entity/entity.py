@@ -7,21 +7,19 @@ import sys
 
 class Entity(pygame.sprite.Sprite):
     id: int
-    x: float
-    y: float
+    pos: pygame.Vector2
     state: int
-    movementStr: str
     path: str
     surf: pygame.Surface
     scaleFactor: Final[int] = 3
     mat: tuple[float, float, float, float]
     tx: float
     ty: float
-    vx: float
-    vy: float
+    velocity: pygame.Vector2
     properties: Final[list[int | float | bool]]
     charModel: Final[dict]
     hitbox: pygame.FRect
+    nullVector: Final[pygame.Vector2] = pygame.Vector2(0.0, 0.0)
     @staticmethod
     def transformMat(surf: pygame.Surface, a: float, b: float, c: float, d: float, tx: float, ty: float) -> pygame.Surface:
         surfArr = pygame.surfarray.array3d(surf)
@@ -37,16 +35,14 @@ class Entity(pygame.sprite.Sprite):
         return outSurf
     def __init__(self, id: int, x: float, y: float, state: int) -> None:
         self.id = id
-        self.x = x
-        self.y = y
+        self.pos = pygame.Vector2(x, y)
         self.state = state
         self.__frame = 0
         self.properties = properties.charD[self.id]
-        self.path = f"images/entities/e{id:04d}.png" if self.properties[7] == 1 else f"images/entities/e{id:04d}f{self.__frame:04d}.png"
+        self.path = f"visuals/entities/e{id:04d}.png" if self.properties[7] == 1 else f"visuals/entities/e{id:04d}f{self.__frame:04d}.png"
         self.charModel = properties.charModels[self.id]
         surf = pygame.image.load(self.path).convert_alpha()
-        self.vx = 0.0
-        self.vy = 0.0
+        self.velocity = self.nullVector
         self.__surfs = []
         if id > 34:
             self.surf = surf
@@ -79,4 +75,4 @@ class Entity(pygame.sprite.Sprite):
         self.updateRect()
 
     def updateRect(self) -> None:
-        self.hitbox.midbottom = (int(self.x * 30) + self.tx, int(self.y * 30) + self.ty)
+        self.hitbox.midbottom = (int(self.pos.x * 30) + self.tx, int(self.pos.y * 30) + self.ty)

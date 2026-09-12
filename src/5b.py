@@ -1,24 +1,15 @@
 import os
-os.environ['SDL_VIDEO_CENTERED'] = '1'
+os.environ['SDL_VIDEO_CENTERED'] = '1' # Centers
 
 import pygame
-from music import playBgMusic
-from typing import Final, Literal
 
 pygame.init()
-
 pygame.font.init()
+pygame.mixer.init()
 
-TITLE: Final[str] = 'BFDIA 5b'
-BLOCK_WIDTH: Final[int] = 30
-
-WIDTH: Final[Literal[960]] = 960
-HEIGHT: Final[Literal[540]] = 540
-
-screen: pygame.Surface = pygame.display.set_mode(size=(WIDTH, HEIGHT))
-pygame.display.set_caption(TITLE)
+screen: pygame.Surface = pygame.display.set_mode(size=(960, 540))
+pygame.display.set_caption('BFDIA 5b')
 clock = pygame.time.Clock()
-playBgMusic()
 
 from game import Game
 
@@ -37,6 +28,7 @@ def events():
         elif event.type == pygame.KEYDOWN:
             if event.key == pygame.K_ESCAPE:
                 running = False
+
 while running:
     dt: float = clock.tick(60) / 1000.0
 

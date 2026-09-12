@@ -2,21 +2,9 @@ import pygame
 from entity.entity import Entity
 from math import sqrt
 from block import Block
-from loadLevels import loadLevels
 from typing import Literal
 class Character(Entity):
-    id: int
-    x: float
-    y: float
-    state: int
-    path: str
-    surf: pygame.Surface
-    mat: tuple[float, float, float, float]
     onObject: bool
-    tx: float
-    ty: float
-    vx: float
-    vy: float
     hitbox: pygame.FRect
     blocks: list[list[Block]]
     legDirection: Literal[-1, 1]
@@ -26,11 +14,11 @@ class Character(Entity):
     def sign(n: float) -> int:
         return (n>0) - (n<0)
 
-    def __init__(self, id: int, x: float, y: float, state: int, level: int) -> None:
+    def __init__(self, id: int, x: float, y: float, state: int, level: int, blocks: list[list[Block]]) -> None:
         super().__init__(id, x, y, state)
         self.level = level
         self.onObject = False
-        self.blocks = loadLevels(level)
+        self.blocks = blocks
         self.legDirection = 1
         self.legMat = [ { "a": 0.3648529052734375, "b": 0, "c": 0, "d": 0.3814697265625, "tx": -0.75 if self.legDirection > 0 else 0.35,  "ty": -0.35 },
 						{
@@ -43,7 +31,7 @@ class Character(Entity):
 
 
     def drawLegs(self, surf: pygame.Surface) -> None:
-        # if (self.id != 5): # Add the bubble dying clause
+        # if (self.id != 5): # TODO: Add the bubble dying clause
         self.legDirection = 1 if self.legDirection > 0 else -1
 
     def draw(self, screen: pygame.Surface) -> None:
@@ -58,15 +46,14 @@ class Character(Entity):
         # TODO: other event stuff
 
     def updatePosition(self) -> None:
-        self.x += self.vx
-        self.y += self.vy
+        self.pos += self.velocity
         super().updateRect()
 
     def applyGravity(self) -> None:
         weight: float = self.properties[2]
         gravity: float = sqrt(abs(weight)) * self.sign(weight)
         if not self.onObject:
-            self.vy = min(self.vy + gravity, 25 / 30)
+            self.velocity.y = min(self.velocity.y + gravity, 25 / 30)
         # TODO: WATER/FLUIDS
 
     def collisionCheck(self) -> None:
