@@ -1,5 +1,8 @@
 from button.menu0Btn import Menu0Btn
 import webbrowser
+from platformdirs import PlatformDirs
+import os
+import json
 
 import pygame
 from typing import Final, final
@@ -15,6 +18,9 @@ class Menu:
 	lcBtn: Final[Menu0Btn]
 	exploreBtn: Final[Menu0Btn]
 	levelProgress: int
+	saveFolder: PlatformDirs
+	saveFilePath: Final[str]
+
 	def watch5a(self) -> None:
 		webbrowser.open_new_tab("https://www.youtube.com/watch?v=4q77g4xo9ic")
 
@@ -23,26 +29,34 @@ class Menu:
 
 	def newGame(self) -> None:
 		self.currLevel = 0
+		with open(self.saveFilePath, "r", encoding="utf-8") as f:
+			dat: dict[str, list[int]] = json.load(f)
+		dat["lvlProgress"][0] = 0
+		with open(self.saveFilePath, "w", encoding="utf-8") as f:
+			f.write(json.dumps(dat, indent=4))
 
 	def contGame(self) -> None:
-		pass
-
+		self.currLevel = 0
+		
 	def levelCreator(self) -> None:
 		pass
 
 	def explore(self) -> None:
 		pass
 
-	def __init__(self, levelProgress: int) -> None:
+	def __init__(self, platform: PlatformDirs) -> None:
 		self.bgColor = pygame.Color(102, 102, 102)
 		self.svgMenu0 = pygame.image.load("visuals/menu0.png").convert_alpha()
 		self.watch5aBtn = Menu0Btn(665.55, 303.75, 'WATCH BFDIA 5a', self.watch5a, False)
 		self.newGameBtn = Menu0Btn(665.55, 348.4, 'NEW GAME', self.newGame, False)
 		self.currLevel = -1
-		self.contGameBtn = Menu0Btn(665.55, 393.05, 'CONTINUE GAME', self.contGame, self.currLevel <= 1)
+		self.levelProgress = 1
+		self.contGameBtn = Menu0Btn(665.55, 393.05, 'CONTINUE GAME', self.contGame, self.levelProgress <= 1)
 		self.lcBtn = Menu0Btn(665.55, 437.7, 'LEVEL CREATOR', self.levelCreator, True)
 		self.exploreBtn = Menu0Btn(665.55, 482.5, 'EXPLORE', self.explore, True)
-		self.levelProgress = levelProgress
+		self.saveFolder = platform
+		self.saveFilePath = os.path.join(self.saveFolder.user_data_dir, "data.json")
+
 	def draw(self, screen: pygame.Surface) -> None:
 		screen.fill(self.bgColor)
 		screen.blit(self.svgMenu0)
