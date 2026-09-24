@@ -5,6 +5,7 @@ from entity.entity import Entity
 from entity.character import Character
 from entity.movingEntity import MovingEntity
 from properties import blockProperties
+from typing import Final
 
 class Level:
     lvlId: int
@@ -16,6 +17,7 @@ class Level:
     cameraX: float
     cameraY: float
     entities: list[Entity]
+    numDeaths: Final[int]
 
     def drawStaticBlocks(self, surf: pygame.Surface) -> None:
         for _ in self.blocks:
@@ -104,6 +106,7 @@ class Level:
         self.cameraY = 0 # TODO: Implement camera
         self.bgSurf = pygame.transform.scale(pygame.image.load(f"visuals/bg/bg{getLevelBgId(lvlId):04d}.png"), (960, 540)).convert()
         self.textSurf = pygame.font.Font("fonts/helveticabold.ttf", 32).render(f"{lvlId+1:03d}. {getLevelName(lvlId)}", True, (255, 255, 255)).convert_alpha()
+        self.numDeaths = getNecessaryDeaths(lvlId)
 
     def drawBg(self, surf: pygame.Surface) -> None:
         surf.blit(self.bgSurf, (0, 0))

@@ -5,7 +5,7 @@ from typing import Final
 import properties
 import sys
 
-class Entity(pygame.sprite.Sprite):
+class Entity:
     id: int
     pos: pygame.Vector2
     state: int

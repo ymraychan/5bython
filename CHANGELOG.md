@@ -1,5 +1,8 @@
 # v1.0.0 (indev)
 
+## September 14, 2026
+* Add level select buttons
+
 ## September 12, 2026
 * Add menu
 * Add level select, not complete

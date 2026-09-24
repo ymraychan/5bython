@@ -108,3 +108,6 @@ def getNumLinesDialouge(level: int) -> int:
 
 def getDialouge(level: int) -> list[tuple[int, str, str]]: # type: ignore
     pass
+
+def getNecessaryDeaths(level: int) -> int:
+    return int(getLevel(level).split("\n")[2+getLevelHeight(level)+getLevelNumEntities(level)+getNumLinesDialouge(level)+1])

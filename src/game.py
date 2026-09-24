@@ -7,6 +7,7 @@ from menu.levelSelect import LevelSelect
 from platformdirs import PlatformDirs
 import os
 import json
+import readData
 
 @final
 class Game:
@@ -16,9 +17,9 @@ class Game:
     menuStage: Final[Menu]
     levelSelectStage: Final[LevelSelect]
     saveFolder: Final[PlatformDirs]
-    saveData: dict[str, list[int]]
-    saveFilePath: Final[str]
-    userdatPath: Final[str]
+    saveData: readData.SaveData
+    numDeathsReqSoFar: int
+    timer: int # measured in frames
     
     def __init__(self) -> None:
         self.currLevel = -2
@@ -27,22 +28,8 @@ class Game:
         self.preMenuStage = PreMenu()
         self.menuStage = Menu(self.saveFolder)
         self.levelSelectStage = LevelSelect()
-        os.makedirs(self.saveFolder.user_data_dir, mode=0o755, exist_ok=True)
-        # TODO: read savedata
-        self.saveFilePath = os.path.join(self.saveFolder.user_data_dir, "data.json")
-        self.userdatPath = os.path.join(self.saveFolder.user_data_dir, "userdat.json")
-        if not os.path.exists(self.saveFilePath):
-            with open(self.saveFilePath, "w", encoding="utf-8") as f:
-                f.write(json.dumps(
-                    {
-                        "lvlProgress": [1],
-                        "winToken": [],
-                        "deaths": [0],
-                        "time": [0],
-                    }
-                , indent=4))
-        with open(self.saveFilePath, "r", encoding="utf-8") as f:
-            self.saveData = json.load(f)
+        self.timer = 0
+        self.saveData = readData.readSaveData()
 
     def draw(self, screen: pygame.Surface) -> None:
         if self.currLevel == -2:
@@ -53,10 +40,12 @@ class Game:
             self.levelSelectStage.draw(screen)
             
     def update(self, screen: pygame.Surface, keysPressed: pygame.key.ScancodeWrapper, keysInstant: list[pygame.event.Event]) -> None:
+        self.timer += 1
         if self.currLevel == -2:
             self.currLevel = self.preMenuStage.currLevel
         elif self.currLevel == -1:
-            self.menuStage.levelProgress = self.saveData["lvlProgress"][0]
+            self.menuStage.levelProgress = self.saveData["lvlProgress"]
             self.currLevel = self.menuStage.currLevel
         elif self.currLevel == 0:
             self.levelSelectStage.update(screen)
+            self.levelSelectStage.timer += 1

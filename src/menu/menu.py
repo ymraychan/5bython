@@ -3,6 +3,7 @@ import webbrowser
 from platformdirs import PlatformDirs
 import os
 import json
+from readData import SaveData, readSaveData, writeSaveData
 
 import pygame
 from typing import Final, final
@@ -29,11 +30,10 @@ class Menu:
 
 	def newGame(self) -> None:
 		self.currLevel = 0
-		with open(self.saveFilePath, "r", encoding="utf-8") as f:
-			dat: dict[str, list[int]] = json.load(f)
-		dat["lvlProgress"][0] = 0
-		with open(self.saveFilePath, "w", encoding="utf-8") as f:
-			f.write(json.dumps(dat, indent=4))
+		dat: SaveData = readSaveData()
+		dat["lvlProgress"] = 0
+		writeSaveData(dat)
+		
 
 	def contGame(self) -> None:
 		self.currLevel = 0

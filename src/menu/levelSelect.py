@@ -1,13 +1,18 @@
-from button.menu0Btn import Menu0Btn
+from button.levelBtn import LevelBtn
 from platformdirs import PlatformDirs
 
 import pygame
 from typing import Final, final
+from collections.abc import Callable
+
+import json
+import os
+
+import readData
+from readData import SaveData
 
 @final
 class LevelSelect:
-
-    # _menu2pngUnscaled: Final[pygame.Surface]
     menu2png: Final[pygame.Surface]
     _cameraX: float
     _cameraY: float
@@ -16,10 +21,22 @@ class LevelSelect:
     font5bSurf: Final[pygame.Surface]
     levelSurf: Final[pygame.Surface]
     selectSurf: Final[pygame.Surface]
+    wtFont: Final[pygame.Font]
     winTokenSurf: Final[pygame.Surface]
     platform: Final[PlatformDirs]
-    levelSelectSurfs: list[pygame.Font]
+    levelSelectBtn: list[LevelBtn]
+    saveData: SaveData
+    currLevel: int
+    saveFilePath: Final[str]
+    winTokenCount: int
+    winTokenTextSurf: pygame.Surface
+    timer: int # measured in frames
 
+
+
+    def playLevel(self, lvl: int) -> None:
+        self.currLevel = lvl
+    
     def __init__(self) -> None:
         # self._menu2pngUnscaled = pygame.image.load("visuals/menu2.png").convert()
         # self.menu2png = pygame.transform.scale_by(self._menu2pngUnscaled, 1/3).convert() # unexplainable downscaling
@@ -30,71 +47,37 @@ class LevelSelect:
         self.levelSurf = pygame.Font("fonts/helveticabold.ttf", 48).render("Level", True, (0, 0, 0))
         self.selectSurf = pygame.Font("fonts/helveticabold.ttf", 48).render("Select", True, (0, 0, 0))
         self.winTokenSurf = pygame.transform.smoothscale(pygame.image.load("visuals/wintoken.png").convert_alpha(), (73, 73))
-        self.platform = PlatformDirs("5bython", "Ilovebfdi314", version="v1.0.0")
+        self.platform = readData.saveFolder
+        self.saveFilePath = readData.saveFilePath
+        self.wtFont = pygame.Font("fonts/helvetica.ttf", 40)
+        readData.createSaveData()
+
+		
+        self.saveData = readData.readSaveData()
+
+        self.levelSelectBtn = []
         for i in range(133):
-            j = i + 19
+            j = i
+            if j >= 100:
+                j += 19
+            color = 1
+            if i >= 100:
+                color = 1
+            if i in self.saveData["winToken"]:
+                color = 4
+            elif self.saveData["lvlProgress"] == i:
+                color = 2
+            elif self.saveData["lvlProgress"] > i:
+                color = 3
+            text = f"{(i+1):03d}"
+            if i >= 100:
+                text = f"B{(i-99):02d}"
+            self.levelSelectBtn.append(LevelBtn(text, (j % 8) * 110 + 45, int(j / 8) * 50 + 160, i, color, i))
+        self.winTokenCount = len(self.saveData["winToken"])
+        self.winTokenTextSurf = self.wtFont.render(f"x {self.winTokenCount}", True, "#000000")
+        self.timer = 0
+
         
-        """	for (let i = 0; i < (playingLevelpack?levelCount:133); i++) {
-		let j = i;
-		if (!playingLevelpack && j >= 100) j += 19;
-		let color = 1;
-		if (i >= levelCount) color = 1;
-		else if (gotCoin[i]) color = 4;
-		else if (levelProgress == i) color = 2;
-		else if (levelProgress > i) color = 3;
-		// else if (i > 99 && i < bonusProgress + 100) {
-		// 	if (!bonusesCleared[i - 100]) color = 2;
-		// 	else color = 3;
-		// }
-		let text = '';
-		if (!playingLevelpack && i >= 100) text = 'B' + (i - 99).toString().padStart(2, '0');
-		else text = (i + 1).toString().padStart(3, '0');
-		drawLevelButton(text, (j % 8) * 110 + 45, Math.floor(j / 8) * 50 + 160, i, color);
-	}"""
-
-    """function drawLevelButton(text, x, y, id, color) {
-	let fill = '#585858';
-	if (color == 2) fill = '#ff8000';
-	else if (color == 3) fill = '#efe303';
-	else if (color == 4) fill = '#00cc00';
-	if (color > 1) {
-		if (
-			onRect(_xmouse, _ymouse + cameraY, x, y, levelButtonSize.w, levelButtonSize.h) &&
-			(_xmouse < 587 || _ymouse < 469)
-		) {
-			onButton = true;
-			if (mouseIsDown) {
-				if (color == 2) fill = '#d56a00';
-				else if (color == 3) fill = '#c6bc02';
-				else if (color == 4) fill = '#00a200';
-				levelButtonClicked = id;
-			} else {
-				if (color == 2) fill = '#ffaa55';
-				else if (color == 3) fill = '#ffff99';
-				else if (color == 4) fill = '#22ff22';
-			}
-		}
-		if (!mouseIsDown && levelButtonClicked === id) {
-			levelButtonClicked = -1;
-			if (id <= levelProgress) { // || (id > 99 && id < bonusProgress + 100)
-				playLevel(id);
-				whiteAlpha = 100;
-			}
-		}
-	}
-
-	ctx.fillStyle = fill;
-	ctx.fillRect(x, y, levelButtonSize.w, levelButtonSize.h);
-	ctx.lineWidth = 2;
-	ctx.strokeStyle = '#000000';
-	ctx.strokeRect(x, y, levelButtonSize.w, levelButtonSize.h);
-
-	ctx.font = 'bold 41px Helvetica';
-	ctx.fillStyle = '#000000';
-	ctx.textAlign = 'center';
-	ctx.textBaseline = 'middle';
-	ctx.fillText(text, x + levelButtonSize.w / 2, y + (levelButtonSize.h * 1.1) / 2);
-}"""
 
     def draw(self, screen: pygame.Surface) -> None:
         screen.blit(self.menu2png, (self.cameraX, self.cameraY))
@@ -102,6 +85,10 @@ class LevelSelect:
         screen.blit(self.levelSurf, (211 + self.cameraX, 30 + self.cameraY))
         screen.blit(self.selectSurf, (211 + self.cameraX, 80 + self.cameraY))
         screen.blit(self.winTokenSurf, (398.5 + self.cameraX, 34.5 + self.cameraY))
+        for btn in self.levelSelectBtn:
+            if btn.draw(screen, self.cameraX, self.cameraY) != -1:
+                self.currLevel = btn.draw(screen, self.cameraX, self.cameraY)
+        screen.blit(self.winTokenTextSurf, (477.95 + self.cameraX, 50.9 + self.cameraY))
         # TODO: Draw a bunch more stuff
 
 
@@ -116,6 +103,8 @@ class LevelSelect:
             self.cameraX = self._cameraX * -1
             self.cameraY = self._cameraY * -1
 
+		
+
 """
 function drawLevelMap() {
 	ctx.drawImage(svgMenu2, 0, 0, svgMenu2.width/scaleFactor, svgMenu2.height/scaleFactor);
@@ -123,34 +112,6 @@ function drawLevelMap() {
 	ctx.fillStyle = '#000000';
 	ctx.textAlign = 'left';
 	ctx.textBaseline = 'top';
-
-	if (!playingLevelpack) {
-		ctx.font = 'bold 115px Arial';
-		ctx.fillText('5b', 47, 23);
-		ctx.font = '48px Helvetica';
-		ctx.fillText('Level', 211, 30);
-		ctx.fillText('Select', 211, 80);
-
-		ctx.drawImage(svgTiles[12], 398.5, 34.5, 73, 73);
-		ctx.font = '40px Helvetica';
-		ctx.fillText('x ' + coins, 477.95, 50.9);
-	} else {
-		ctx.font = 'bold 48px Helvetica';
-		// ctx.fillText(exploreLevelPageLevel.title, 55, 35);
-		let titleLineCount = wrapText((levelpackType === 0)?exploreLevelPageLevel.title:lcSavedLevelpacks['l' + lcCurrentSavedLevelpack].title, 50, 35, 500, 48).length;
-		if (levelpackType === 0) {
-			const isGuest = exploreLevelPageLevel.creator === "";
-			const username = isGuest ? "Guest" : exploreLevelPageLevel.creator.username;
-			
-			ctx.font = 'italic 21px Helvetica';
-			ctx.fillText('by ' + username, 50, 32 + titleLineCount*48);
-		}
-
-		ctx.drawImage(svgTiles[12], 568.5, 29.5, 50, 50);
-		ctx.font = '21px Helvetica';
-		ctx.fillText('x ' + coins, 627.95, 45.9);
-	}
-
 	ctx.font = '21px Helvetica';
 	ctx.fillText(toHMS(timer), 767.3, 27.5);
 	ctx.fillText(deathCount.toLocaleString(), 767.3, 55.9);
@@ -167,34 +128,4 @@ function drawLevelMap() {
 		ctx.fillText(mdao[levelProgress - 1], 767.3, 85.4);
 		ctx.fillText((deathCount - mdao[levelProgress - 1]).toLocaleString(), 767.3, 116.8);
 	}
-	for (let i = 0; i < (playingLevelpack?levelCount:133); i++) {
-		let j = i;
-		if (!playingLevelpack && j >= 100) j += 19;
-		let color = 1;
-		if (i >= levelCount) color = 1;
-		else if (gotCoin[i]) color = 4;
-		else if (levelProgress == i) color = 2;
-		else if (levelProgress > i) color = 3;
-		// else if (i > 99 && i < bonusProgress + 100) {
-		// 	if (!bonusesCleared[i - 100]) color = 2;
-		// 	else color = 3;
-		// }
-		let text = '';
-		if (!playingLevelpack && i >= 100) text = 'B' + (i - 99).toString().padStart(2, '0');
-		else text = (i + 1).toString().padStart(3, '0');
-		drawLevelButton(text, (j % 8) * 110 + 45, Math.floor(j / 8) * 50 + 160, i, color);
-	}
 }"""
-
-# This part is done
-"""		case 2:
-			drawLevelMap();
-			if (_xmouse < 587 || _ymouse < 469) {
-				if (_ymouse <= 180) {
-					cameraY = Math.min(Math.max(cameraY - (180 - _ymouse) * 0.1, 0), 1080);
-				} else if (_ymouse >= 360) {
-					cameraY = Math.min(Math.max(cameraY + (_ymouse - 360) * 0.1, ), 1080);
-				}
-			}
-			break;
-"""
