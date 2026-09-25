@@ -9,6 +9,8 @@ class Character(Entity):
     blocks: list[list[Block]]
     legDirection: Literal[-1, 1]
     legMat: list[dict[str, float]]
+    prevPos: pygame.Vector2
+    prevVel: pygame.Vector2
 
     @staticmethod
     def sign(n: float) -> int:
@@ -48,6 +50,8 @@ class Character(Entity):
     def updatePosition(self) -> None:
         self.pos += self.velocity
         super().updateRect()
+        self.preVel = self.velocity.copy()
+        self.prePos = self.pos.copy()
 
     def applyGravity(self) -> None:
         weight: float = self.properties[2]
@@ -57,7 +61,12 @@ class Character(Entity):
         # TODO: WATER/FLUIDS
 
     def collisionCheck(self) -> None:
-        pass
+        for _ in self.blocks:
+            for block in _:
+                if block.info[1] and self.hitbox.colliderect(block.rect):
+                    self.onObject = True
+                    self.velocity.y = 0
+                    self.pos = self.prePos
 
     def die(self) -> None:
         pass

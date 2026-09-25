@@ -1,6 +1,12 @@
 # v1.0.0 (indev)
 
-## September 14, 2026
+## September 24, 2026
+* Finish level select
+* Level select screens are no longer classes
+* Objects do stop when colliding with a block but remains clipped in
+* Remove guard clause for entity missing torsomat
+
+## September 23, 2026
 * Add level select buttons
 
 ## September 12, 2026

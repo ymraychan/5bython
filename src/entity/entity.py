@@ -33,6 +33,7 @@ class Entity:
         pygame.surfarray.blit_array(outSurf, surfTransformed)
         pygame.surfarray.pixels_alpha(outSurf)[:] = alphaTransformed
         return outSurf
+    
     def __init__(self, id: int, x: float, y: float, state: int) -> None:
         self.id = id
         self.pos = pygame.Vector2(x, y)
@@ -53,16 +54,11 @@ class Entity:
                 self.__frame = 0
             self.tx = self.ty = 0.0
         else:
-            try:
-                surf = self.transformMat(surf, *self.charModel["torsomat"].values())
-                self.mat = tuple(list(self.charModel["torsomat"].values())[:4])
-                self.tx, self.ty = list(self.charModel["torsomat"].values())[4:6]
-                surf = pygame.transform.scale(surf, (surf.get_width()//self.scaleFactor, surf.get_height()//self.scaleFactor))
-                self.surf = surf
-            except:
-                self.surf = surf
-                self.tx = self.ty = 0.0
-                print(f"No torsomat for id: {id}", file=sys.stderr)
+            surf = self.transformMat(surf, *self.charModel["torsomat"].values())
+            self.mat = tuple(list(self.charModel["torsomat"].values())[:4])
+            self.tx, self.ty = list(self.charModel["torsomat"].values())[4:6]
+            surf = pygame.transform.scale(surf, (surf.get_width()//self.scaleFactor, surf.get_height()//self.scaleFactor))
+            self.surf = surf
         self.hitbox = self.surf.get_frect()
 
     def draw(self, screen: pygame.Surface) -> None:

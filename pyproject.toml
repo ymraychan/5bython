@@ -1,6 +1,6 @@
 [project]
 name = "5bython"
-version = "0.0.4"
+version = "0.0.5"
 description = "A python port of HTML5b, which is an HTML5 port of BFDIA 5b"
 authors = [{name = "Ilovebfdi314", email="ymraychan+5bython@gmail.com"}]
 
