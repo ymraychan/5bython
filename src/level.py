@@ -17,6 +17,7 @@ class Level:
     cameraX: float
     cameraY: float
     entities: list[Entity]
+    restartCountdown: int
     numDeaths: Final[int]
 
     def drawStaticBlocks(self, surf: pygame.Surface) -> None:
@@ -107,6 +108,7 @@ class Level:
         self.bgSurf = pygame.transform.scale(pygame.image.load(f"visuals/bg/bg{getLevelBgId(lvlId):04d}.png"), (960, 540)).convert()
         self.textSurf = pygame.font.Font("fonts/helveticabold.ttf", 32).render(f"{lvlId+1:03d}. {getLevelName(lvlId)}", True, (255, 255, 255)).convert_alpha()
         self.numDeaths = getNecessaryDeaths(lvlId)
+        self.restartCountdown = -1
 
     def drawBg(self, surf: pygame.Surface) -> None:
         surf.blit(self.bgSurf, (0, 0))
@@ -140,6 +142,19 @@ class Level:
                 if b:
                     b.addFrame()
 
+    def possiblyRestart(self, surf: pygame.Surface, keysInstant: list[pygame.event.Event]):
+        for key in keysInstant:
+            if key.type == pygame.KEYDOWN:
+                if key.key == pygame.K_r:
+                    self.restartCountdown = 10
+        if self.restartCountdown == 0:
+            self.__init__(self.lvlId)
+        if self.restartCountdown > 0:
+            self.restartCountdown -= 1 
+        else:
+            self.restartCountdown = -1
+        # TODO: Add the screen shake and white alpha effect.
+
     def updateEntities(self, surf: pygame.Surface, keysPressed: pygame.key.ScancodeWrapper, keysInstant: list[pygame.event.Event]) -> None:
         for entity in self.entities:
             entity.update(surf, keysPressed, keysInstant)
@@ -147,3 +162,4 @@ class Level:
     def update(self, screen: pygame.Surface, keysPressed: pygame.key.ScancodeWrapper, keysInstant: list[pygame.event.Event]) -> None:
         self.updateAnimBlocks(screen)
         self.updateEntities(screen, keysPressed, keysInstant)
+        self.possiblyRestart(screen, keysInstant)

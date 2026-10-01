@@ -11,7 +11,7 @@ saveFilePath: Final[str] = os.path.join(saveFolder.user_data_dir, "data.json")
 userdatPath: Final[str] = os.path.join(saveFolder.user_data_dir, "userdat.json")
 
 def createSaveData() -> None:
-    print(saveFilePath)
+    # print(saveFilePath)
     os.makedirs(saveFolder.user_data_dir, mode=0o755, exist_ok=True)
     if not os.path.exists(saveFilePath):
         with open(saveFilePath, "w", encoding="utf-8") as f:

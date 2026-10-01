@@ -30,9 +30,6 @@ def events():
     for event in keysInstant:
         if event.type == pygame.QUIT:
             running = False
-        elif event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_ESCAPE:
-                running = False
 
 while running:
     dt: float = tickloop(clock, 60) / 1000.0
@@ -43,5 +40,7 @@ while running:
 
     game.update(screen, keysPressed, keysInstant)
     game.draw(screen)
+
+    # print(clock.get_fps())
 
     pygame.display.flip()

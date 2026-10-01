@@ -1,5 +1,13 @@
 # v1.0.0 (indev)
 
+## September 26, 2026
+* Fix bug where on the very first frame of loading a level objects start at (0, 0)
+* Fix clipping into a block
+* Add restart key functionality
+* Remove guard clause for negative weight due to nonsensicality
+* Add restart timer
+* Add jump, left, right. Need to fix jumping and moving simultanously.
+
 ## September 24, 2026
 * Finish level select
 * Level select screens are no longer classes

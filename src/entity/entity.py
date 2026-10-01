@@ -59,16 +59,16 @@ class Entity:
             self.tx, self.ty = list(self.charModel["torsomat"].values())[4:6]
             surf = pygame.transform.scale(surf, (surf.get_width()//self.scaleFactor, surf.get_height()//self.scaleFactor))
             self.surf = surf
-        self.hitbox = self.surf.get_frect()
+        self.hitbox = self.surf.get_frect(midbottom=self.pos)
 
     def draw(self, screen: pygame.Surface) -> None:
         screen.blit(self.surf, self.hitbox)
 
     def drawHitbox(self, screen: pygame.Surface) -> None:
-        pygame.draw.rect(screen, (255, 0, 0), self.hitbox, width=2)
+        pygame.draw.rect(screen, (255, 0, 0), self.hitbox.move(self.tx, self.ty), width=2)
 
     def update(self, screen: pygame.Surface, keysPressed: pygame.key.ScancodeWrapper, keysInstant: list[pygame.event.Event]) -> None:
         self.updateRect()
 
     def updateRect(self) -> None:
-        self.hitbox.midbottom = (int(self.pos.x * 30) + self.tx, int(self.pos.y * 30) + self.ty)
+        self.hitbox.midbottom = (self.pos.x * 30, self.pos.y * 30)
