@@ -7700,16 +7700,16 @@ function draw() {
 	ctx.clearRect(0, 0, canvas.width, canvas.height);
 	if (menuScreen == 2 || menuScreen == 3) ctx.translate(Math.floor(-cameraX + shakeX), Math.floor(-cameraY + shakeY));
 	switch (menuScreen) {
-		case -1:
+		case -1: // pre level screen
 			ctx.drawImage(preMenuBG, 0, 0, cwidth, cheight);
 			drawMenu0Button('START GAME', (cwidth - menu0ButtonSize.w) / 2, (cheight - menu0ButtonSize.h) / 2, false, playGame);
 			break;
 
-		case 0:
+		case 0: // level screen
 			drawMenu();
 			break;
 
-		case 2:
+		case 2: // level select screen
 			drawLevelMap();
 			if (_xmouse < 587 || _ymouse < 469) {
 				if (_ymouse <= 180) {
@@ -7720,7 +7720,7 @@ function draw() {
 			}
 			break;
 
-		case 3:
+		case 3: // THE GAME
 			// TODO: Look into if it would be more accurate to the Flash version if this were moved to after the game logic.
 			// ctx.drawImage(
 			// 	osc4,
@@ -7795,9 +7795,9 @@ function draw() {
 						}
 					} else {
 						if (cornerHangTimer == 0) {
-							if (_keysDown[37]) {
+							if (_keysDown[37]) { // 37 is... left?
 								char[control].moveHorizontal(-power);
-							} else if (_keysDown[39]) {
+							} else if (_keysDown[39]) { // 39 is... right?
 								char[control].moveHorizontal(power);
 							}
 						}
@@ -7889,7 +7889,7 @@ function draw() {
 						}
 						qPress = true;
 					} else qPress = false;
-					if (_keysDown[32]) {
+					if (_keysDown[32]) { // JUMP
 						if (
 							(char[control].onob || char[control].submerged == 3) &&
 							char[control].landTimer > 2 &&
@@ -7904,13 +7904,13 @@ function draw() {
 				}
 			}
 
-			if (_keysDown[82] && wipeTimer == 0) {
+			if (_keysDown[82] && wipeTimer == 0) { // RESTART
 				wipeTimer = 1;
 				transitionType = 0;
 				// if (cutScene == 1) csBubble.gotoAndPlay(17);
 			}
 			locations[4] = 1000;
-			for (let i = 0; i < charCount; i++) {
+			for (let i = 0; i < charCount; i++) { // loop over every single character
 				if (char[i].charState >= 5) {
 					char[i].landTimer = char[i].landTimer + 1;
 					if (char[i].carry && char[char[i].carryObject].justChanged < char[i].justChanged) {
@@ -7919,12 +7919,12 @@ function draw() {
 					if (char[i].standingOn == -1) {
 						if (char[i].onob) {
 							if (char[i].charState >= 5) {
-								char[i].fricGoal = onlyConveyorsUnder(i);
+								char[i].fricGoal = onlyConveyorsUnder(i); // conveyors???
 							}
 						}
 					} else char[i].fricGoal = char[char[i].standingOn].vx;
 
-					char[i].applyForces(char[i].weight2, control == i, jumpPower * 0.7);
+					char[i].applyForces(char[i].weight2, control == i, jumpPower * 0.7); // some gravity?
 					if (char[i].deathTimer >= 30) char[i].charMove();
 					if (char[i].id == 3) {
 						if (char[i].temp > 50) {

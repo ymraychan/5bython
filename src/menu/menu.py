@@ -1,7 +1,7 @@
 from button.menu0Btn import Menu0Btn
 import webbrowser
 import os
-from readData import SaveData, readSaveData, writeSaveData, saveFolder
+from read_data import SaveData, readSaveData, writeSaveData, saveFolder
 
 import pygame
 from typing import Final

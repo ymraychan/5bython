@@ -1,25 +1,31 @@
 import pygame
 from scipy import ndimage
 import numpy as np
-from typing import Final
+from typing import Final, Literal
 import properties
-import sys
+
+from mypy_extensions import u8
+
+from load_images import entity_images
+
+scale_factor: Final[Literal[3]] = 3
 
 class Entity:
     id: int
-    pos: pygame.Vector2
-    state: int
+    x: float
+    y: float
+    state: u8
     path: str
     surf: pygame.Surface
-    scaleFactor: Final[int] = 3
+    surfs: list[pygame.Surface]
     mat: tuple[float, float, float, float]
     tx: float
     ty: float
-    velocity: pygame.Vector2
+    vx: float
+    vy: float
     properties: Final[list[int | float | bool]]
     charModel: Final[dict]
     hitbox: pygame.FRect
-    nullVector: Final[pygame.Vector2] = pygame.Vector2(0.0, 0.0)
     @staticmethod
     def transformMat(surf: pygame.Surface, a: float, b: float, c: float, d: float, tx: float, ty: float) -> pygame.Surface:
         surfArr = pygame.surfarray.array3d(surf)
@@ -36,20 +42,21 @@ class Entity:
     
     def __init__(self, id: int, x: float, y: float, state: int) -> None:
         self.id = id
-        self.pos = pygame.Vector2(x, y)
+        self.x = x
+        self.y = y
         self.state = state
         self.__frame = 0
-        self.properties = properties.charD[self.id]
+        self.properties = properties.char_d[self.id]
         self.path = f"visuals/entities/e{id:04d}.png" if self.properties[7] == 1 else f"visuals/entities/e{id:04d}f{self.__frame:04d}.png"
-        self.charModel = properties.charModels[self.id]
+        self.charModel = properties.char_models[self.id]
         surf = pygame.image.load(self.path).convert_alpha()
-        self.velocity = self.nullVector
-        self.__surfs = []
+        self.vx = self.vy = 0
+        self.surfs = []
         if id > 34:
             self.surf = surf
             if self.properties[7] > 1:
                 for i in range(int(self.properties[7])):
-                    self.__surfs.append(pygame.image.load(f"images/entities/e{id:04d}f{self.__frame:04d}.png").convert_alpha())
+                    self.surfs.append(pygame.image.load(f"visuals/entities/e{id:04d}f{self.__frame:04d}.png").convert_alpha())
                     self.__frame += 1
                 self.__frame = 0
             self.tx = self.ty = 0.0
@@ -57,9 +64,9 @@ class Entity:
             surf = self.transformMat(surf, *self.charModel["torsomat"].values())
             self.mat = tuple(list(self.charModel["torsomat"].values())[:4])
             self.tx, self.ty = list(self.charModel["torsomat"].values())[4:6]
-            surf = pygame.transform.scale(surf, (surf.get_width()//self.scaleFactor, surf.get_height()//self.scaleFactor))
+            surf = pygame.transform.scale(surf, (surf.get_width()//scale_factor, surf.get_height()//scale_factor))
             self.surf = surf
-        self.hitbox = self.surf.get_frect(midbottom=self.pos)
+        self.hitbox = self.surf.get_frect(midbottom=(self.x, self.y))
 
     def draw(self, screen: pygame.Surface) -> None:
         screen.blit(self.surf, self.hitbox)
@@ -71,4 +78,4 @@ class Entity:
         self.updateRect()
 
     def updateRect(self) -> None:
-        self.hitbox.midbottom = (self.pos.x * 30, self.pos.y * 30)
+        self.hitbox.midbottom = (self.x, self.y)

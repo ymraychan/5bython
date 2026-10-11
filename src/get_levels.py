@@ -2,58 +2,58 @@ import re
 
 levelString = open("data/levels.txt", encoding="utf-8").read()
 
-def getLevel(level: int) -> str:
+def get_level(level: int) -> str:
     """ Get the entire string of the level in question """
     return levelString.split("\n\n")[level]
 
-def getLevelName(level: int) -> str:
+def get_level_name(level: int) -> str:
     """ Get the name of the level """
-    return getLevel(level).split("\n")[0]
+    return get_level(level).split("\n")[0]
 
-def getLevelMetadata(level: int) -> str:
+def get_level_metadata(level: int) -> str:
     """ Get the entire metadata of the level """
-    return getLevel(level).split("\n")[1]
+    return get_level(level).split("\n")[1]
 
-def getLevelWidth(level: int) -> int:
+def get_level_width(level: int) -> int:
     """ Get the width of the level """
-    return int(getLevelMetadata(level)[0:2])
+    return int(get_level_metadata(level)[0:2])
 
-def getLevelHeight(level: int) -> int:
+def get_level_height(level: int) -> int:
     """ Get the height of the level """
-    return int(getLevelMetadata(level)[3:5])
+    return int(get_level_metadata(level)[3:5])
 
-def getLevelNumEntities(level: int) -> int:
+def get_level_num_entities(level: int) -> int:
     """ Get the number of entities in the level """
-    return int(getLevelMetadata(level)[6:8])
+    return int(get_level_metadata(level)[6:8])
 
-def getLevelBgId(level: int) -> int:
+def get_level_bg_id(level: int) -> int:
     """ Get the background id of the level """
-    return int(getLevelMetadata(level)[9:11])
+    return int(get_level_metadata(level)[9:11])
 
-def getLevelBlockMode(level: int) -> str:
+def get_level_block_mode(level: int) -> str:
     """ Get the block mode of the level. L means one char per block, H means two """
-    return getLevelMetadata(level)[12]
+    return get_level_metadata(level)[12]
 
-def getLevelBlocks(level: int) -> list[str]:
+def get_level_blocks(level: int) -> list[str]:
     """ Get the list of blocks of the level """
-    return getLevel(level).split("\n")[2:2+getLevelHeight(level)]
+    return get_level(level).split("\n")[2:2+get_level_height(level)]
 
-def getLevelBlocksAsStr(level: int) -> str:
+def get_level_blocks_as_str(level: int) -> str:
     """ Return level blocks as a string instead of a list """
     v: str = ""
-    for _ in getLevelBlocks(level):
+    for _ in get_level_blocks(level):
         v += _
         v += "\n"
     return v
 
-def getCharAt(level: int, x_pos: int, y_pos: int) -> str:
+def get_char_at(level: int, x_pos: int, y_pos: int) -> str:
     """ Get the character at (x_pos, y_pos), (0, 0) is top left corner """
-    if getLevelBlockMode(level) == "L":
-        return getLevelBlocks(level)[y_pos][x_pos]
+    if get_level_block_mode(level) == "L":
+        return get_level_blocks(level)[y_pos][x_pos]
     else:
-        return getLevelBlocks(level)[y_pos][2*x_pos:2*x_pos+2]
+        return get_level_blocks(level)[y_pos][2*x_pos:2*x_pos+2]
 
-def charToCode(char: str) -> int:
+def char_to_code(char: str) -> int:
     """ Convert the character to a unique code """
     n: int = 0
     if len(char) == 1:
@@ -73,7 +73,7 @@ def charToCode(char: str) -> int:
             if char[1] == ".": return 110
             else: return ord(char[1]) + 65
 
-def getEntityDat(level: int) -> list[tuple[int, float, float, int] | tuple[int, float, float, int, str]]:
+def get_entity_dat(level: int) -> list[tuple[int, float, float, int] | tuple[int, float, float, int, str]]:
     """ Returns a list of the entity data in the given level
         Args:
             level (int): the level
@@ -85,7 +85,7 @@ def getEntityDat(level: int) -> list[tuple[int, float, float, int] | tuple[int, 
             - Tuple pos 4 (int): Entity state
             - Tuple pos 5 (optional) (str): Movement string"""
     val: list[tuple[int, float, float, int] | tuple[int, float, float, int, str]] = []
-    entityList: list[str] = getLevel(level).split("\n")[2+getLevelHeight(level):2+getLevelHeight(level)+getLevelNumEntities(level)]
+    entityList: list[str] = get_level(level).split("\n")[2+get_level_height(level):2+get_level_height(level)+get_level_num_entities(level)]
     for _ in entityList:
         parts = re.split(r",| ", _)
         if len(parts) > 4:
@@ -95,19 +95,20 @@ def getEntityDat(level: int) -> list[tuple[int, float, float, int] | tuple[int, 
 
     return val
 
-def getLevelCharCount(level: int):
-    entities = getEntityDat(level)
+def get_level_char_count(level: int):
+    entities = get_entity_dat(level)
     count = 0
     for entity in entities:
         if entity[3] == 9 or entity[3] == 10:
             count += 1
 
     return count
-def getNumLinesDialouge(level: int) -> int:
-    return int(getLevel(level).split("\n")[2+getLevelHeight(level)+getLevelNumEntities(level)])
 
-def getDialouge(level: int) -> list[tuple[int, str, str]]: # type: ignore
-    pass
+def get_num_lines_dialouge(level: int) -> int:
+    return int(get_level(level).split("\n")[2+get_level_height(level)+get_level_num_entities(level)])
 
-def getNecessaryDeaths(level: int) -> int:
-    return int(getLevel(level).split("\n")[2+getLevelHeight(level)+getLevelNumEntities(level)+getNumLinesDialouge(level)+1])
+def get_dialouge(level: int) -> list[tuple[int, str, str]]:
+    return []
+
+def get_necessary_deaths(level: int) -> int:
+    return int(get_level(level).split("\n")[2+get_level_height(level)+get_level_num_entities(level)+get_num_lines_dialouge(level)+1])

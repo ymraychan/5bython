@@ -8,7 +8,7 @@ import json
 import os
 from types5b import SaveData
 
-import readData
+import read_data
 
 menu2png: Final[pygame.Surface] = pygame.image.load("visuals/menu2.png").convert()
 _cameraX: float = 0
@@ -20,11 +20,11 @@ levelSurf: Final[pygame.Surface] = pygame.Font("fonts/helveticabold.ttf", 48).re
 selectSurf: Final[pygame.Surface] = pygame.Font("fonts/helveticabold.ttf", 48).render("Select", True, (0, 0, 0))
 wtFont: Final[pygame.Font] = pygame.Font("fonts/helvetica.ttf", 40)
 winTokenSurf: Final[pygame.Surface] = pygame.transform.smoothscale(pygame.image.load("visuals/wintoken.png").convert_alpha(), (73, 73))
-platform: Final[PlatformDirs] = readData.saveFolder
+platform: Final[PlatformDirs] = read_data.saveFolder
 levelSelectBtn: list[LevelBtn]
-saveData: SaveData = readData.readSaveData()
+saveData: SaveData = read_data.readSaveData()
 currLevel: int = 0
-saveFilePath: Final[str] = readData.saveFilePath
+saveFilePath: Final[str] = read_data.saveFilePath
 winTokenCount: int = len(saveData["winToken"])
 winTokenTextSurf: pygame.Surface = wtFont.render(f"x {winTokenCount}", True, "#000000")
 timer: int = 0 # measured in frames

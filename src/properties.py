@@ -20,7 +20,7 @@ from typing import Final
 # [17] - loop?
 # [18] - loop frame order
 
-blockProperties: Final[list[list]] = [
+block_properties: Final[list[list]] = [
     # tile0
     [False,False,False,False,False,False,False,False,False,False,False,0,0,False,False,True,0,False],
     [True,True,True,True,False,False,False,False,False,False,False,0,0,True,False,True,1,False],
@@ -171,7 +171,7 @@ blockProperties: Final[list[list]] = [
     [False,True,False,False,False,False,False,False,True,False,False,0,2,False,False,True,1,False],
     [False,False,False,False,False,False,False,False,True,False,False,0,2,False,False,True,1,False],
 ]
-doorLightX: Final[list[list[float]]] = [
+door_light_x: Final[list[list[float]]] = [
     [27.5],
     [15, 40],
     [10, 27.5, 45],
@@ -181,7 +181,7 @@ doorLightX: Final[list[list[float]]] = [
 ]
 
 
-charModels: Final[list[dict]] = [
+char_models: Final[list[dict]] = [
 	{
 		# Ruby
 		"torsomat": {"a":1,"b":0,"c":0,"d":1,"tx":0.05,"ty":-3.1},
@@ -1146,7 +1146,7 @@ charModels: Final[list[dict]] = [
 # [8] - has arms
 # [9] - default state (in level creator)
 
-charD: Final[list[list[int | float | bool]]] = [
+char_d: Final[list[list[int | float | bool]]] = [
 	[28,45.4,0.45,27,0.8,False,1,1,True,10],
 	[23,56,0.36,31,0.8,False,1.7,1,True,10],
 	[20,51,0.41,20,0.85,False,5,1,False,10],
