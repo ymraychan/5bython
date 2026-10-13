@@ -1,8 +1,9 @@
 from typing import TypedDict
 
+
 class SaveData(TypedDict):
-    lvlProgress: int
-    winToken: list[int]
+    lvl_progress: int
+    win_token: list[int]
     deaths: int
     time: int
 

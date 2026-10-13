@@ -1,8 +1,10 @@
 import os
+
 os.environ['SDL_VIDEO_CENTERED'] = '1' # Centers
 
-import pygame
 import sys
+
+import pygame
 
 pygame.init()
 pygame.font.init()

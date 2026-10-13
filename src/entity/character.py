@@ -9,7 +9,7 @@ jump_power: Final[Literal[11]] = 11
 power: Final[Literal[1]] = 1
 
 class Character(Entity):
-    onObject: bool
+    on_object: bool
     hitbox: pygame.FRect
     blocks: list[list[Block]]
     leg_direction: Literal[-1, 1]
@@ -22,7 +22,7 @@ class Character(Entity):
     def __init__(self, id: int, x: float, y: float, state: int, level: int, blocks: list[list[Block]]) -> None:
         super().__init__(id, x, y, state)
         self.level = level
-        self.onObject = False
+        self.on_object = False
         self.blocks = blocks
         self.leg_direction = 1
         self.leg_mat = [ { "a": 0.3648529052734375, "b": 0, "c": 0, "d": 0.3814697265625, "tx": -0.75 if self.leg_direction > 0 else 0.35, "ty": -0.35 },
@@ -53,9 +53,9 @@ class Character(Entity):
         super().updateRect()
 
     def applyForces(self) -> None:
-        if not self.onObject:
+        if not self.on_object:
             self.vy = min(self.vy + self.gravity, 25)
-        if self.onObject:
+        if self.on_object:
             self.vx = (self.vx - self.fric_goal) * self.friction + self.fric_goal
         else:
             self.vx *= 1 - (1 - self.friction) * (0.12)
@@ -64,7 +64,7 @@ class Character(Entity):
         # TODO: WATER/FLUIDS
 
     def collisionCheck(self) -> None:
-        self.onObject = False
+        self.on_object = False
         for _ in self.blocks:
             for block in _:
                 # TODO: Fix left/right collisions
@@ -74,7 +74,7 @@ class Character(Entity):
                     self.hitbox.right > block.rect.left:
                     self.vx = 0"""
                 if block.info[1] and self.hitbox.colliderect(block.rect):
-                    self.onObject = True
+                    self.on_object = True
                     self.vy = 0
                     self.hitbox.bottom = block.rect.top
                 elif block.info[0] and self.hitbox.colliderect(block.rect) and self.vy > 0:
@@ -83,9 +83,9 @@ class Character(Entity):
         
 
     def jump(self, jumpPower: int) -> None:
-        if self.onObject:
+        if self.on_object:
             self.vy = jumpPower
-            self.onObject = False
+            self.on_object = False
 
     def checkKeys(self, screen: pygame.Surface, keysPressed: pygame.key.ScancodeWrapper, keysInstant: list[pygame.event.Event]) -> None:
         for k in keysInstant:
@@ -107,7 +107,7 @@ class Character(Entity):
         # No key presses after this line
 
     def moveHorizontal(self, power: int) -> None:
-        if not self.onObject and ((power * self.fric_goal)<= 0):
+        if not self.on_object and ((power * self.fric_goal)<= 0):
             self.fric_goal = 0
         
         self.vx += power

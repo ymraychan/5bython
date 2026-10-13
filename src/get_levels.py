@@ -1,10 +1,11 @@
 import re
 
-levelString = open("data/levels.txt", encoding="utf-8").read()
+with open("data/levels.txt", encoding="utf-8") as f:
+    level_string = f.read()
 
 def get_level(level: int) -> str:
     """ Get the entire string of the level in question """
-    return levelString.split("\n\n")[level]
+    return level_string.split("\n\n")[level]
 
 def get_level_name(level: int) -> str:
     """ Get the name of the level """

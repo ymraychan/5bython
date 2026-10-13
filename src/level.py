@@ -1,16 +1,18 @@
-from block import Block
-from get_levels import *
-import pygame
-from entity.entity import Entity
-from entity.character import Character
-from entity.moving_entity import MovingEntity
-from properties import block_properties
 from typing import Final
+
+import pygame
+
+from block import Block
+from entity.character import Character
+from entity.entity import Entity
+from entity.moving_entity import MovingEntity
+from get_levels import *
+from load_images import bg_images, border_surf
+
 
 class Level:
     lvl_id: int
     blocks: list[list[Block]]
-    border_img: list[pygame.Surface] = [pygame.image.load(f"visuals/borders/tb{_:04d}.png") for _ in range(38)]
     bg_surf: pygame.Surface
     text_surf: pygame.Surface
     static_block_surf: pygame.Surface
@@ -23,9 +25,8 @@ class Level:
     def draw_static_blocks(self, surf: pygame.Surface) -> None:
         for _ in self.blocks:
             for tile in _:
-                if tile:
-                    if tile.info[16] == 1 and tile.id != 6:
-                        tile.draw(surf)
+                if tile and tile.info[16] == 1 and tile.id != 6:
+                    tile.draw(surf)
 
     def draw_borders(self, surf: pygame.Surface) -> None:
         for i in range(len(self.blocks)):
@@ -52,20 +53,20 @@ class Level:
                 if topEmpty: score += 8
 
                 if score > 0:
-                    surf.blit(self.border_img[score - 1], (j * 30, i * 30))
+                    surf.blit(border_surf[score - 1], (j * 30, i * 30))
                     
                 if not topEmpty and not leftEmpty and isEmpty(i - 1, j - 1):
-                    surf.blit(self.border_img[34], (j * 30, i * 30))
+                    surf.blit(border_surf[34], (j * 30, i * 30))
                 if not topEmpty and not rightEmpty and isEmpty(i - 1, j + 1):
-                    surf.blit(self.border_img[35], (j * 30, i * 30))
+                    surf.blit(border_surf[35], (j * 30, i * 30))
                 if not bottomEmpty and not rightEmpty and isEmpty(i + 1, j + 1):
-                    surf.blit(self.border_img[36], (j * 30, i * 30))
+                    surf.blit(border_surf[36], (j * 30, i * 30))
                 if not bottomEmpty and not leftEmpty and isEmpty(i + 1, j - 1):
-                    surf.blit(self.border_img[37], (j * 30, i * 30))
+                    surf.blit(border_surf[37], (j * 30, i * 30))
 
     def load_entities(self) -> list[Entity]:
         raw: list[tuple[int, float, float, int] | tuple[int, float, float, int, str]] = get_entity_dat(self.lvl_id)
-        listEntities: list[Entity] = []
+        list_entities: list[Entity] = []
         for entity in raw:
             match entity:
                 case (id, x, y, state):
@@ -73,8 +74,8 @@ class Level:
                 case (id, x, y, state, movementStr):
                     e = MovingEntity(id, x, y, state, movementStr)
             
-            listEntities.append(e)
-        return listEntities
+            list_entities.append(e)
+        return list_entities
 
     def load_blocks(self) -> list[list[Block]]:
         blocks: list[list[Block]] = []
@@ -105,7 +106,7 @@ class Level:
         self.draw_borders(self.static_block_surf)
         self.camera_x = 0 # TODO: Implement camera
         self.camera_y = 0 # TODO: Implement camera
-        self.bg_surf = pygame.transform.scale(pygame.image.load(f"visuals/bg/bg{get_level_bg_id(lvl_id):04d}.png"), (960, 540)).convert()
+        self.bg_surf = bg_images[lvl_id]
         self.text_surf = pygame.font.Font("fonts/helveticabold.ttf", 32).render(f"{lvl_id+1:03d}. {get_level_name(lvl_id)}", True, (255, 255, 255)).convert_alpha()
         self.num_deaths = get_necessary_deaths(lvl_id)
         self.restart_countdown = -1
@@ -117,9 +118,8 @@ class Level:
         surf.blit(self.static_block_surf, (self.camera_x, self.camera_y))
         for _ in self.blocks:
             for tile in _:
-                if tile:
-                    if tile.info[16] > 1 or tile.id == 6:
-                        tile.draw(surf)
+                if tile and tile.info[16] > 1 or tile.id == 6:
+                    tile.draw(surf)
 
 
 
@@ -144,9 +144,8 @@ class Level:
 
     def possibly_restart(self, surf: pygame.Surface, keysInstant: list[pygame.event.Event]):
         for key in keysInstant:
-            if key.type == pygame.KEYDOWN:
-                if key.key == pygame.K_r:
-                    self.restart_countdown = 10
+            if key.type == pygame.KEYDOWN and key.key == pygame.K_r:
+                self.restart_countdown = 10
         if self.restart_countdown == 0:
             self.__init__(self.lvl_id)
         if self.restart_countdown > 0:

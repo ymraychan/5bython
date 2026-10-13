@@ -1,10 +1,10 @@
 # v1.0.0 (indev)
 
 ## October 11, 2026
-* Try to make all variables follow PEP 8
+* Make everything except imports follow PEP 8
 * Rename a bunch of files
 * Add a dedicated image loader
-* Try to make functions follow PEP 8 as well
+* Add (hopefully) all image files
 
 ## September 26, 2026
 * Fix bug where on the very first frame of loading a level objects start at (0, 0)

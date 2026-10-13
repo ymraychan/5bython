@@ -180,7 +180,6 @@ door_light_x: Final[list[list[float]]] = [
     [4, 14, 23, 32, 41, 50]
 ]
 
-
 char_models: Final[list[dict]] = [
 	{
 		# Ruby

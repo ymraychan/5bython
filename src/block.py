@@ -1,10 +1,12 @@
-from typing import Final, Any
-from mypy_extensions import i32
+from typing import Any, Final
 
 import pygame
-from get_levels import char_to_code, get_level_bg_id, get_level_char_count
+from mypy_extensions import i32
+
 import properties
+from get_levels import char_to_code, get_level_bg_id, get_level_char_count
 from load_images import block_images
+
 
 class Block:
     block_properties: Final[list[list]] = properties.block_properties

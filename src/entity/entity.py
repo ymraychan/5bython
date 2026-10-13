@@ -24,7 +24,7 @@ class Entity:
     vx: float
     vy: float
     properties: Final[list[int | float | bool]]
-    charModel: Final[dict]
+    char_model: Final[dict]
     hitbox: pygame.FRect
     @staticmethod
     def transformMat(surf: pygame.Surface, a: float, b: float, c: float, d: float, tx: float, ty: float) -> pygame.Surface:
@@ -48,7 +48,7 @@ class Entity:
         self.__frame = 0
         self.properties = properties.char_d[self.id]
         self.path = f"visuals/entities/e{id:04d}.png" if self.properties[7] == 1 else f"visuals/entities/e{id:04d}f{self.__frame:04d}.png"
-        self.charModel = properties.char_models[self.id]
+        self.char_model = properties.char_models[self.id]
         surf = pygame.image.load(self.path).convert_alpha()
         self.vx = self.vy = 0
         self.surfs = []
@@ -61,9 +61,9 @@ class Entity:
                 self.__frame = 0
             self.tx = self.ty = 0.0
         else:
-            surf = self.transformMat(surf, *self.charModel["torsomat"].values())
-            self.mat = tuple(list(self.charModel["torsomat"].values())[:4])
-            self.tx, self.ty = list(self.charModel["torsomat"].values())[4:6]
+            surf = self.transformMat(surf, *self.char_model["torsomat"].values())
+            self.mat = tuple(list(self.char_model["torsomat"].values())[:4])
+            self.tx, self.ty = list(self.char_model["torsomat"].values())[4:6]
             surf = pygame.transform.scale(surf, (surf.get_width()//scale_factor, surf.get_height()//scale_factor))
             self.surf = surf
         self.hitbox = self.surf.get_frect(midbottom=(self.x, self.y))

@@ -1,13 +1,11 @@
-import pygame
-
 from typing import Final
 
-import properties
-
+import pygame
 from mypy_extensions import i32
 
-block_images: Final[list[list[pygame.Surface]]]
-entity_images: Final[list[list[pygame.Surface]]]
+import properties
+from get_levels import get_level_bg_id
+
 _tmp: list[list[pygame.Surface]] = []
 
 for i in range(135):
@@ -27,12 +25,12 @@ for i in range(135):
             obj.append(pygame.image.load(f"visuals/blocks/b{i:04d}.png").convert_alpha())
     _tmp.append(obj)
 
-block_images = _tmp
-tmp = []
+
+_tmp = []
 
 for i in range(56):
     obj: list[pygame.Surface] = []
-    frame_count: i32 = int(properties.char_d[i][7])
+    frame_count = int(properties.char_d[i][7])
     for j in range(frame_count):
         obj.append(
             pygame.image.load(
@@ -42,5 +40,18 @@ for i in range(56):
         .convert_alpha())
     _tmp.append(obj)
 
-entity_images = _tmp
-_tmp = []
+
+block_images: Final[list[list[pygame.Surface]]] = _tmp
+entity_images: Final[list[list[pygame.Surface]]] = _tmp
+bg_images: Final[list[pygame.Surface]] = [ pygame.transform.scale(
+    pygame.image.load(f"visuals/bg/bg{get_level_bg_id(i):04d}.png").convert(), (960, 540)
+    )
+    for i in range(12) ]
+
+border_surf: Final[list[pygame.Surface]] = [pygame.image.load(f"visuals/borders/tb{_:04d}.png") for _ in range(38)]
+svg_menu_0: Final[pygame.Surface] = pygame.image.load("visuals/menu0.png").convert_alpha()
+menu_2_surf: Final[pygame.Surface] = pygame.image.load("visuals/menu2.png").convert()
+win_token_surf: Final[pygame.Surface] = pygame.transform.smoothscale(pygame.image.load("visuals/wintoken.png").convert_alpha(), (73, 73))
+pre_menu_surf: Final[pygame.Surface] = pygame.transform.scale(pygame.image.load("visuals/premenubg.png").convert_alpha(), (960, 540))
+
+del _tmp

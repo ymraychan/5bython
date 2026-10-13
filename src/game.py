@@ -1,11 +1,14 @@
-import pygame
-from level import Level
 from typing import Final, final
-import menu.level_select
-import menu.pre_menu
-import menu.menu
+
+import pygame
 from platformdirs import PlatformDirs
+
+import menu.level_select
+import menu.menu
+import menu.pre_menu
 import read_data
+from level import Level
+
 
 @final
 class Game:
@@ -17,32 +20,32 @@ class Game:
     timer: int # measured in frames
     
     def __init__(self) -> None:
-        self.currLevel = -2
+        self.curr_level = -2
         self.level = Level(0)
         self.save_folder = PlatformDirs("5bython", "Ilovebfdi314", version="v1.0.0")
         self.timer = 0
         self.saveData = read_data.read_save_data()
 
     def draw(self, screen: pygame.Surface) -> None:
-        if self.currLevel == -2:
+        if self.curr_level == -2:
             menu.pre_menu.draw(screen)
-        elif self.currLevel == -1:
+        elif self.curr_level == -1:
             menu.menu.draw(screen)
-        elif self.currLevel == 0:
+        elif self.curr_level == 0:
             menu.level_select.draw(screen)
         else:
             self.level.draw(screen)
             
     def update(self, screen: pygame.Surface, keysPressed: pygame.key.ScancodeWrapper, keysInstant: list[pygame.event.Event]) -> None:
         self.timer += 1
-        if self.currLevel == -2:
-            self.currLevel = menu.pre_menu.currLevel
-        elif self.currLevel == -1:
-            menu.menu.levelProgress = self.saveData["lvlProgress"]
-            self.currLevel = menu.menu.currLevel
-        elif self.currLevel == 0:
+        if self.curr_level == -2:
+            self.curr_level = menu.pre_menu.curr_level
+        elif self.curr_level == -1:
+            menu.menu.level_progress = self.saveData["lvlProgress"]
+            self.curr_level = menu.menu.curr_level
+        elif self.curr_level == 0:
             menu.level_select.update(screen)
             menu.level_select.timer += 1
-            self.currLevel = menu.level_select.currLevel
+            self.curr_level = menu.level_select.curr_level
         else:
             self.level.update(screen, keysPressed, keysInstant)

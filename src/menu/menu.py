@@ -1,54 +1,54 @@
 from button.menu0Btn import Menu0Btn
 import webbrowser
 import os
-from read_data import SaveData, readSaveData, writeSaveData, saveFolder
+from read_data import SaveData, read_save_data, write_save_data, save_folder
+from load_images import svg_menu_0
 
 import pygame
 from typing import Final
 
 
-def watch5a() -> None:
+def watch_5a() -> None:
 	webbrowser.open_new_tab("https://www.youtube.com/watch?v=4q77g4xo9ic")
 
-def watch5c() -> None:
+def watch_5c() -> None:
 	webbrowser.open_new_tab("https://www.youtube.com/watch?v=YrsRLT3u0Cg")
 
-def newGame() -> None:
-	global currLevel
-	currLevel = 0
-	dat: SaveData = readSaveData()
+def new_game() -> None:
+	global curr_level
+	curr_level = 0
+	dat: SaveData = read_save_data()
 	dat["lvlProgress"] = 0
-	writeSaveData(dat)
+	write_save_data(dat)
 	
 
-def contGame() -> None:
-	global currLevel
-	currLevel = 0
+def cont_game() -> None:
+	global curr_level
+	curr_level = 0
 	
-def levelCreator() -> None:
+def level_creator() -> None:
 	pass
 
 def explore() -> None:
 	pass
 
 
-bgColor: Final[pygame.Color] = pygame.Color(102, 102, 102)
-levelProgress: int = 0
-svgMenu0: Final[pygame.Surface] = pygame.image.load("visuals/menu0.png").convert_alpha()
-watch5aBtn: Final[Menu0Btn] = Menu0Btn(665.55, 303.75, 'WATCH BFDIA 5a', watch5a, False)
-newGameBtn: Final[Menu0Btn] = Menu0Btn(665.55, 348.4, 'NEW GAME', newGame, False)
-currLevel: int = -1
-contGameBtn: Final[Menu0Btn] = Menu0Btn(665.55, 393.05, 'CONTINUE GAME', contGame, levelProgress <= 1)
-lcBtn: Final[Menu0Btn] = Menu0Btn(665.55, 437.7, 'LEVEL CREATOR', levelCreator, True)
-exploreBtn: Final[Menu0Btn] = Menu0Btn(665.55, 482.5, 'EXPLORE', explore, True)
-saveFilePath: Final[str] = os.path.join(saveFolder.user_data_dir, "data.json")
+bg_color: Final[pygame.Color] = pygame.Color(102, 102, 102)
+level_progress: int = 0
+watch_5a_btn: Final[Menu0Btn] = Menu0Btn(665.55, 303.75, 'WATCH BFDIA 5a', watch_5a, False)
+new_game_btn: Final[Menu0Btn] = Menu0Btn(665.55, 348.4, 'NEW GAME', new_game, False)
+curr_level: int = -1
+cont_game_btn: Final[Menu0Btn] = Menu0Btn(665.55, 393.05, 'CONTINUE GAME', cont_game, level_progress <= 1)
+lc_btn: Final[Menu0Btn] = Menu0Btn(665.55, 437.7, 'LEVEL CREATOR', level_creator, True)
+explore_btn: Final[Menu0Btn] = Menu0Btn(665.55, 482.5, 'EXPLORE', explore, True)
+save_file_path: Final[str] = os.path.join(save_folder.user_data_dir, "data.json")
 
 
 def draw(screen: pygame.Surface) -> None:
-	screen.fill(bgColor)
-	screen.blit(svgMenu0)
-	watch5aBtn.draw(screen)
-	newGameBtn.draw(screen)
-	contGameBtn.draw(screen)
-	lcBtn.draw(screen)
-	exploreBtn.draw(screen)
+	screen.fill(bg_color)
+	screen.blit(svg_menu_0)
+	watch_5a_btn.draw(screen)
+	new_game_btn.draw(screen)
+	cont_game_btn.draw(screen)
+	lc_btn.draw(screen)
+	explore_btn.draw(screen)

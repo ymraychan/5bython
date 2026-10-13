@@ -2,12 +2,12 @@ import pygame
 from entity.entity import Entity
 
 class MovingEntity(Entity):
-    movementStr: str
+    movement_str: str
     __frame: int
     __time: int
-    def __init__(self, id: int, x: float, y: float, state: int, movementStr: str) -> None:
+    def __init__(self, id: int, x: float, y: float, state: int, movement_str: str) -> None:
         super().__init__(id, x, y, state)
-        self.movementStr = movementStr
+        self.movement_str = movement_str
         self.__frame = 0
         self.__time = 0
 
@@ -18,19 +18,20 @@ class MovingEntity(Entity):
 
     def update(self, screen: pygame.Surface, keysPressed: pygame.key.ScancodeWrapper, keysInstant: list[pygame.event.Event]) -> None:
         self.__time += 1
-        self.updateSurf()
-        self.updatePos()
+        self.update_surf()
+        self.update_pos()
 
-    def updateSurf(self) -> None:
+    def update_surf(self) -> None:
         if self.id > 34 and self.properties[7] > 1:
             self.__frame += 1
             self.__frame %= int(self.properties[7])
             self.path = f"images/entities/e{self.id:04d}f{self.__frame:04d}.png"
             self.surf = self.surfs[self.__frame]
-    def updateVelocity(self) -> None:
+    
+    def update_velocity(self) -> None:
         self.vx = self.vy = 0
-        string = self.movementStr[2:]
-        rspeed = int(self.movementStr[:2])
+        string = self.movement_str[2:]
+        rspeed = int(self.movement_str[:2])
         if self.__time >= len(string) * rspeed:
             self.__time = 0
         speed = 1 / rspeed
@@ -44,8 +45,8 @@ class MovingEntity(Entity):
         if pos == 3:
             self.vx = speed
 
-    def updatePos(self) -> None:
-        self.updateVelocity()
+    def update_pos(self) -> None:
+        self.update_velocity()
         self.x += self.vx
         self.y += self.vy
         self.hitbox.x += self.vx
