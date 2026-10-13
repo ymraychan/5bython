@@ -86,8 +86,8 @@ def get_entity_dat(level: int) -> list[tuple[int, float, float, int] | tuple[int
             - Tuple pos 4 (int): Entity state
             - Tuple pos 5 (optional) (str): Movement string"""
     val: list[tuple[int, float, float, int] | tuple[int, float, float, int, str]] = []
-    entityList: list[str] = get_level(level).split("\n")[2+get_level_height(level):2+get_level_height(level)+get_level_num_entities(level)]
-    for _ in entityList:
+    entity_list: list[str] = get_level(level).split("\n")[2+get_level_height(level):2+get_level_height(level)+get_level_num_entities(level)]
+    for _ in entity_list:
         parts = re.split(r",| ", _)
         if len(parts) > 4:
             val.append((int(parts[0]), float(parts[1]), float(parts[2]), int(parts[3]), str(parts[4])))

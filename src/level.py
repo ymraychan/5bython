@@ -25,7 +25,7 @@ class Level:
     def draw_static_blocks(self, surf: pygame.Surface) -> None:
         for _ in self.blocks:
             for tile in _:
-                if tile and tile.info[16] == 1 and tile.id != 6:
+                if tile and tile.info[16] == 1 and tile.idx != 6:
                     tile.draw(surf)
 
     def draw_borders(self, surf: pygame.Surface) -> None:
@@ -36,32 +36,32 @@ class Level:
                 if not (this_tile and this_tile.info and this_tile.info[13]):
                     continue
                     
-                def isEmpty(ni, nj):
+                def is_empty(ni, nj):
                     if 0 <= ni < len(self.blocks) and 0 <= nj < len(self.blocks[0]):
                         neighbor = self.blocks[ni][nj]
                         return not (neighbor and neighbor.info and neighbor.info[13])
                     return False
 
-                leftEmpty = isEmpty(i, j - 1)
-                rightEmpty = isEmpty(i, j + 1)
-                bottomEmpty = isEmpty(i + 1, j)
-                topEmpty = isEmpty(i - 1, j)
+                left_empty = is_empty(i, j - 1)
+                right_empty = is_empty(i, j + 1)
+                bottom_empty = is_empty(i + 1, j)
+                top_empty = is_empty(i - 1, j)
                 score = 0
-                if rightEmpty: score += 1
-                if leftEmpty: score += 2
-                if bottomEmpty: score += 4
-                if topEmpty: score += 8
+                if right_empty: score += 1
+                if left_empty: score += 2
+                if bottom_empty: score += 4
+                if top_empty: score += 8
 
                 if score > 0:
                     surf.blit(border_surf[score - 1], (j * 30, i * 30))
                     
-                if not topEmpty and not leftEmpty and isEmpty(i - 1, j - 1):
+                if not top_empty and not left_empty and is_empty(i - 1, j - 1):
                     surf.blit(border_surf[34], (j * 30, i * 30))
-                if not topEmpty and not rightEmpty and isEmpty(i - 1, j + 1):
+                if not top_empty and not right_empty and is_empty(i - 1, j + 1):
                     surf.blit(border_surf[35], (j * 30, i * 30))
-                if not bottomEmpty and not rightEmpty and isEmpty(i + 1, j + 1):
+                if not bottom_empty and not right_empty and is_empty(i + 1, j + 1):
                     surf.blit(border_surf[36], (j * 30, i * 30))
-                if not bottomEmpty and not leftEmpty and isEmpty(i + 1, j - 1):
+                if not bottom_empty and not left_empty and is_empty(i + 1, j - 1):
                     surf.blit(border_surf[37], (j * 30, i * 30))
 
     def load_entities(self) -> list[Entity]:
@@ -71,8 +71,8 @@ class Level:
             match entity:
                 case (id, x, y, state):
                     e = Character(id, x, y, state, self.lvl_id, self.blocks)
-                case (id, x, y, state, movementStr):
-                    e = MovingEntity(id, x, y, state, movementStr)
+                case (id, x, y, state, movement_str):
+                    e = MovingEntity(id, x, y, state, movement_str)
             
             list_entities.append(e)
         return list_entities
@@ -118,7 +118,7 @@ class Level:
         surf.blit(self.static_block_surf, (self.camera_x, self.camera_y))
         for _ in self.blocks:
             for tile in _:
-                if tile and tile.info[16] > 1 or tile.id == 6:
+                if tile and tile.info[16] > 1 or tile.idx == 6:
                     tile.draw(surf)
 
 
@@ -142,8 +142,8 @@ class Level:
                 if b:
                     b.add_frame()
 
-    def possibly_restart(self, surf: pygame.Surface, keysInstant: list[pygame.event.Event]):
-        for key in keysInstant:
+    def possibly_restart(self, surf: pygame.Surface, keys_instant: list[pygame.event.Event]):
+        for key in keys_instant:
             if key.type == pygame.KEYDOWN and key.key == pygame.K_r:
                 self.restart_countdown = 10
         if self.restart_countdown == 0:
@@ -154,11 +154,11 @@ class Level:
             self.restart_countdown = -1
         # TODO: Add the screen shake and white alpha effect.
 
-    def update_entities(self, surf: pygame.Surface, keysPressed: pygame.key.ScancodeWrapper, keysInstant: list[pygame.event.Event]) -> None:
+    def update_entities(self, surf: pygame.Surface, keys_pressed: pygame.key.ScancodeWrapper, keys_instant: list[pygame.event.Event]) -> None:
         for entity in self.entities:
-            entity.update(surf, keysPressed, keysInstant)
+            entity.update(surf, keys_pressed, keys_instant)
 
-    def update(self, screen: pygame.Surface, keysPressed: pygame.key.ScancodeWrapper, keysInstant: list[pygame.event.Event]) -> None:
+    def update(self, screen: pygame.Surface, keys_pressed: pygame.key.ScancodeWrapper, keys_instant: list[pygame.event.Event]) -> None:
         self.update_anim_blocks(screen)
-        self.update_entities(screen, keysPressed, keysInstant)
-        self.possibly_restart(screen, keysInstant)
+        self.update_entities(screen, keys_pressed, keys_instant)
+        self.possibly_restart(screen, keys_instant)

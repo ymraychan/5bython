@@ -1,27 +1,24 @@
-import pygame
-
-from collections.abc import Callable
 from typing import Final
 
-from button.button import Button
+import pygame
 
-bold40pxHect: Final[pygame.Font] = pygame.Font("fonts/helveticabold.ttf", 41)
+bold_40_px_hect: Final[pygame.Font] = pygame.Font("fonts/helveticabold.ttf", 41)
 
 black: Final[pygame.Color] = pygame.Color(0, 0, 0)
 
 class LevelBtn:
     # {w: 100, h: 40}
     
-    fontRect: Final[pygame.FRect]
+    font_rect: Final[pygame.FRect]
     rect: Final[pygame.FRect]
     color: Final[pygame.Color]
-    colorOnHover: Final[pygame.Color]
-    colorOnClick: Final[pygame.Color]
-    fontSurf: Final[pygame.Surface]
+    color_on_hover: Final[pygame.Color]
+    color_on_click: Final[pygame.Color]
+    font_surf: Final[pygame.Surface]
     level: Final[int]
 
     def __init__(self, text: str, x: float, y: float, id: int, color: int, level: int):
-        fill: list[str] = ["0, 0, 0"] # [color, colorOnClick, colorOnHover] # just like the js version
+        fill: list[str] = ["0, 0, 0"] # [color, color_on_click, color_on_hover] # just like the js version
         if color == 1:
             fill = ["#585858", "#585858", "#585858"]
         elif color == 2:
@@ -35,33 +32,33 @@ class LevelBtn:
         
         self.rect = pygame.FRect(x, y, 100, 40)
         self.color = pygame.Color(fill[0])
-        self.colorOnHover = pygame.Color(fill[2])
-        self.colorOnClick = pygame.Color(fill[1])
-        self.fontSurf = bold40pxHect.render(text, True, (0, 0, 0))
+        self.color_on_hover = pygame.Color(fill[2])
+        self.color_on_click = pygame.Color(fill[1])
+        self.font_surf = bold_40_px_hect.render(text, True, (0, 0, 0))
         self.level = level
 
-        self.fontRect = self.fontSurf.get_frect()
-        self.fontRect.center = (x + 100 / 2, y + (40 * 1.1) / 2)
+        self.font_rect = self.font_surf.get_frect()
+        self.font_rect.center = (x + 100 / 2, y + (40 * 1.1) / 2)
 
-    def drawRect(self, screen: pygame.Surface, cx: float, cy: float) -> int:
+    def draw_rect(self, screen: pygame.Surface, cx: float, cy: float) -> int:
         _rect: pygame.FRect = self.rect.move(cx, cy)
-        levelPlaying: int = -1
+        level_playing: int = -1
         if self.rect.collidepoint(pygame.mouse.get_pos()):
             if pygame.mouse.get_pressed()[0]:
-                pygame.draw.rect(screen, self.colorOnClick, _rect.inflate(2, 2))
+                pygame.draw.rect(screen, self.color_on_click, _rect.inflate(2, 2))
             else:
-                pygame.draw.rect(screen, self.colorOnHover, _rect.inflate(2, 2))
+                pygame.draw.rect(screen, self.color_on_hover, _rect.inflate(2, 2))
             if pygame.mouse.get_just_released()[0]:
-                levelPlaying = self.level
+                level_playing = self.level
         else:
             pygame.draw.rect(screen, self.color, _rect.inflate(2, 2))
         pygame.draw.rect(screen, "#000000", _rect.inflate(2, 2), width=2)
-        return levelPlaying
+        return level_playing
 
-    def drawFont(self, screen: pygame.Surface, cx: float, cy: float) -> None:
-        screen.blit(self.fontSurf, self.fontRect.move(cx, cy))
+    def draw_font(self, screen: pygame.Surface, cx: float, cy: float) -> None:
+        screen.blit(self.font_surf, self.font_rect.move(cx, cy))
 
     def draw(self, screen, cx, cy) -> int:
-        _ = self.drawRect(screen, cx, cy)
-        self.drawFont(screen, cx, cy)
+        _ = self.draw_rect(screen, cx, cy)
+        self.draw_font(screen, cx, cy)
         return _

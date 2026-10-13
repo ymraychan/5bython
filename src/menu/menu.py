@@ -1,11 +1,12 @@
-from button.menu0Btn import Menu0Btn
-import webbrowser
 import os
-from read_data import SaveData, read_save_data, write_save_data, save_folder
-from load_images import svg_menu_0
+import webbrowser
+from typing import Final
 
 import pygame
-from typing import Final
+
+from button.menu0Btn import Menu0Btn
+from load_images import svg_menu_0
+from read_data import SaveData, read_save_data, save_folder, write_save_data
 
 
 def watch_5a() -> None:
@@ -18,7 +19,7 @@ def new_game() -> None:
 	global curr_level
 	curr_level = 0
 	dat: SaveData = read_save_data()
-	dat["lvlProgress"] = 0
+	dat["lvl_progress"] = 0
 	write_save_data(dat)
 	
 

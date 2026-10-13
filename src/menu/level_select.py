@@ -1,13 +1,12 @@
-from button.levelBtn import LevelBtn
-from platformdirs import PlatformDirs
-
-import pygame
 from typing import Final
 
-from types_5b import SaveData
-from load_images import menu_2_surf, win_token_surf
+import pygame
+from platformdirs import PlatformDirs
 
 import read_data
+from button.levelBtn import LevelBtn
+from load_images import menu_2_surf, win_token_surf
+from types_5b import SaveData
 
 _camera_x: float = 0
 _camera_y: float = 0
@@ -22,7 +21,7 @@ level_select_btn: list[LevelBtn]
 save_data: SaveData = read_data.read_save_data()
 curr_level: int = 0
 save_file_path: Final[str] = read_data.save_file_path
-win_token_count: int = len(save_data["winToken"])
+win_token_count: int = len(save_data["win_token"])
 win_token_text_surf: pygame.Surface = wt_font.render(f"x {win_token_count}", True, "#000000")
 timer: int = 0 # measured in frames
 
@@ -34,11 +33,11 @@ for i in range(133):
     color = 1
     if i >= 100:
         color = 1
-    if i in save_data["winToken"]:
+    if i in save_data["win_token"]:
         color = 4
-    elif save_data["lvlProgress"] == i:
+    elif save_data["lvl_progress"] == i:
         color = 2
-    elif save_data["lvlProgress"] > i:
+    elif save_data["lvl_progress"] > i:
         color = 3
     text = f"{(i+1):03d}"
     if i >= 100:
@@ -64,7 +63,7 @@ def draw(screen: pygame.Surface) -> None:
 
 
 def update(screen: pygame.Surface) -> None:
-    global _camera_x, _camera_y, camera_x, camera_y
+    global _camera_y, camera_x, camera_y
     xmouse, ymouse = pygame.mouse.get_pos()
     if xmouse < 587 or ymouse < 469:
         if ymouse <= 180:

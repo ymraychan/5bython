@@ -1,12 +1,14 @@
-import pygame
-from entity.entity import Entity
 from math import sqrt
+from typing import Final, Literal
+
+import pygame
+
 from block import Block
-from typing import Literal, Final
+from entity.entity import Entity
 from types_5b import AffineMat
 
-jump_power: Final[Literal[11]] = 11
-power: Final[Literal[1]] = 1
+jump_power: Final = 11
+power: Final = 1
 
 class Character(Entity):
     on_object: bool
@@ -39,20 +41,20 @@ class Character(Entity):
         self.fric_goal = 0
 
 
-    def drawLegs(self, surf: pygame.Surface) -> None:
+    def draw_legs(self, surf: pygame.Surface) -> None:
         # if (self.id != 5): # TODO: Add the bubble dying clause
         self.leg_direction = 1 if self.leg_direction > 0 else -1
 
     def draw(self, screen: pygame.Surface) -> None:
         screen.blit(self.surf, self.hitbox.move(self.tx,self.ty))
-        super().drawHitbox(screen)
+        super().draw_hitbox(screen)
 
-    def updatePosition(self) -> None:
+    def update_position(self) -> None:
         self.x += self.vx
         self.y += self.vy
-        super().updateRect()
+        super().update_rect()
 
-    def applyForces(self) -> None:
+    def apply_forces(self) -> None:
         if not self.on_object:
             self.vy = min(self.vy + self.gravity, 25)
         if self.on_object:
@@ -63,7 +65,7 @@ class Character(Entity):
         if abs(self.vx) < 0.01: self.vx = 0
         # TODO: WATER/FLUIDS
 
-    def collisionCheck(self) -> None:
+    def collision_check(self) -> None:
         self.on_object = False
         for _ in self.blocks:
             for block in _:
@@ -82,13 +84,13 @@ class Character(Entity):
                 
         
 
-    def jump(self, jumpPower: int) -> None:
+    def jump(self, jump_power: int) -> None:
         if self.on_object:
-            self.vy = jumpPower
+            self.vy = jump_power
             self.on_object = False
 
-    def checkKeys(self, screen: pygame.Surface, keysPressed: pygame.key.ScancodeWrapper, keysInstant: list[pygame.event.Event]) -> None:
-        for k in keysInstant:
+    def check_keys(self, screen: pygame.Surface, keys_pressed: pygame.key.ScancodeWrapper, keys_instant: list[pygame.event.Event]) -> None:
+        for k in keys_instant:
             if k.type == pygame.KEYDOWN:
                 if k.key == pygame.K_SPACE:
                     self.jump(-jump_power)
@@ -100,24 +102,24 @@ class Character(Entity):
                     print("z")
                 if k.key == pygame.K_RETURN:
                     print("enter")
-        if keysPressed[pygame.K_LEFT]:
-            self.moveHorizontal(-power)
-        if keysPressed[pygame.K_RIGHT]:
-            self.moveHorizontal(power)
+        if keys_pressed[pygame.K_LEFT]:
+            self.move_horizontal(-power)
+        if keys_pressed[pygame.K_RIGHT]:
+            self.move_horizontal(power)
         # No key presses after this line
 
-    def moveHorizontal(self, power: int) -> None:
+    def move_horizontal(self, power: int) -> None:
         if not self.on_object and ((power * self.fric_goal)<= 0):
             self.fric_goal = 0
         
         self.vx += power
 
 
-    def update(self, screen: pygame.Surface, keysPressed: pygame.key.ScancodeWrapper, keysInstant: list[pygame.event.Event]) -> None:
-        self.checkKeys(screen, keysPressed, keysInstant)
-        self.applyForces()
-        self.updatePosition()
-        self.collisionCheck()
+    def update(self, screen: pygame.Surface, keys_pressed: pygame.key.ScancodeWrapper, keys_instant: list[pygame.event.Event]) -> None:
+        self.check_keys(screen, keys_pressed, keys_instant)
+        self.apply_forces()
+        self.update_position()
+        self.collision_check()
         # TODO: other event stuff
 
     def die(self) -> None:

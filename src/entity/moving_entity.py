@@ -1,5 +1,7 @@
 import pygame
+
 from entity.entity import Entity
+
 
 class MovingEntity(Entity):
     movement_str: str
@@ -16,7 +18,7 @@ class MovingEntity(Entity):
         hitbox.midbottom=(self.x + self.tx, self.y + self.ty)
         screen.blit(self.surf, hitbox)
 
-    def update(self, screen: pygame.Surface, keysPressed: pygame.key.ScancodeWrapper, keysInstant: list[pygame.event.Event]) -> None:
+    def update(self, screen: pygame.Surface, keys_pressed: pygame.key.ScancodeWrapper, keys_instant: list[pygame.event.Event]) -> None:
         self.__time += 1
         self.update_surf()
         self.update_pos()

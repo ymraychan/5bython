@@ -1,9 +1,10 @@
-from button.menu0Btn import Menu0Btn
-
-from load_images import pre_menu_surf
+from typing import Final
 
 import pygame
-from typing import Final
+
+from button.menu0Btn import Menu0Btn
+from load_images import pre_menu_surf
+
 
 def start_game() -> None:
     global curr_level

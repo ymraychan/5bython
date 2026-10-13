@@ -24,12 +24,12 @@ running = True
 
 game: Game = Game()
 
-keysInstant: list[pygame.Event] = []
+keys_instant: list[pygame.Event] = []
 
 def events():
-    global running, keysInstant
-    keysInstant = pygame.event.get()
-    for event in keysInstant:
+    global running, keys_instant
+    keys_instant = pygame.event.get()
+    for event in keys_instant:
         if event.type == pygame.QUIT:
             running = False
 
@@ -38,9 +38,9 @@ while running:
 
     events()
 
-    keysPressed = pygame.key.get_pressed()
+    keys_pressed = pygame.key.get_pressed()
 
-    game.update(screen, keysPressed, keysInstant)
+    game.update(screen, keys_pressed, keys_instant)
     game.draw(screen)
 
     # print(clock.get_fps())

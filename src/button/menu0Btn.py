@@ -1,8 +1,7 @@
-import pygame
-
+from collections.abc import Callable
 from typing import Final
 
-from collections.abc import Callable
+import pygame
 
 from button.button import Button
 
@@ -11,28 +10,28 @@ from button.button import Button
 font: Final[pygame.Font] = pygame.Font("fonts/helveticabold.ttf", 30)
 
 color: Final[pygame.Color] = pygame.Color(255, 255, 255)
-colorOnHover: Final[pygame.Color] = pygame.Color(212, 212, 212)
-colorOnClick: Final[pygame.Color] = pygame.Color(184, 184, 184)
-grayed: Final[pygame.Color] = colorOnClick # Coincindence since they have the same color
-textColor: Final[pygame.Color] = pygame.Color(102, 102, 102)
+color_on_hover: Final[pygame.Color] = pygame.Color(212, 212, 212)
+color_on_click: Final[pygame.Color] = pygame.Color(184, 184, 184)
+grayed: Final[pygame.Color] = color_on_click # Coincindence since they have the same color
+text_color: Final[pygame.Color] = pygame.Color(102, 102, 102)
 
 class Menu0Btn(Button):
 
-    fontRect: Final[pygame.FRect]
+    font_rect: Final[pygame.FRect]
     def __init__(self, x: float, y: float, text: str,
-                 actionOnClick: Callable[[], None], disabled: bool, width: float=273.0) -> None:
+                 action_on_click: Callable[[], None], disabled: bool, width: float=273.0) -> None:
         if disabled:
             super().__init__(x, y, round(6.65), text, grayed, grayed, grayed,
-                             font, 0, 0, textColor, actionOnClick, width, 36.9)
+                             font, 0, 0, text_color, action_on_click, width, 36.9)
             # fontx, fonty has a dummy value of 0 because we're using a custom font drawing method anyway
         else:
-            super().__init__(x, y, round(6.65), text, color, colorOnHover, colorOnClick,
-                             font, 0, 0, textColor, actionOnClick, width, 36.9)
+            super().__init__(x, y, round(6.65), text, color, color_on_hover, color_on_click,
+                             font, 0, 0, text_color, action_on_click, width, 36.9)
             # same here
 
-        self.fontRect = self.fontSurf.get_frect()
-        self.fontRect.center = (x + width / 2, y + (36.9 * 1.1) / 2)
+        self.font_rect = self.font_surf.get_frect()
+        self.font_rect.center = (x + width / 2, y + (36.9 * 1.1) / 2)
     def draw(self, screen: pygame.Surface) -> None:
-        super().drawRect(screen)
-        screen.blit(self.fontSurf, self.fontRect)
+        super().draw_rect(screen)
+        screen.blit(self.font_surf, self.font_rect)
         

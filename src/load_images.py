@@ -1,10 +1,11 @@
-from typing import Final
+from typing import Final, cast
 
 import pygame
-from mypy_extensions import i32
+from cython import int as i32
 
 import properties
 from get_levels import get_level_bg_id
+from types_5b import _BlockProperties2
 
 _tmp: list[list[pygame.Surface]] = []
 
@@ -17,13 +18,17 @@ for i in range(135):
         if frame_count > 1:
             if len(properties.block_properties[i]) == 19:
                 obj.append(
-                    pygame.image.load(f"visuals/blocks/b{i:04d}f{properties.block_properties[i][18][j]:04d}.png")
+                    pygame.image.load(
+                        f"visuals/blocks/b{i:04d}f{cast(_BlockProperties2, properties.block_properties[i])[18][j]:04d}.png"
+                        )
                     .convert_alpha())
             else:
                 obj.append(pygame.image.load(f"visuals/blocks/b{i:04d}f{j:04d}.png").convert_alpha())
         else:
             obj.append(pygame.image.load(f"visuals/blocks/b{i:04d}.png").convert_alpha())
     _tmp.append(obj)
+
+block_images: Final[list[list[pygame.Surface]]] = cast(list[list[pygame.Surface]], _tmp)
 
 
 _tmp = []
@@ -41,8 +46,8 @@ for i in range(56):
     _tmp.append(obj)
 
 
-block_images: Final[list[list[pygame.Surface]]] = _tmp
-entity_images: Final[list[list[pygame.Surface]]] = _tmp
+entity_images: Final[list[list[pygame.Surface]]] = _tmp.copy()
+
 bg_images: Final[list[pygame.Surface]] = [ pygame.transform.scale(
     pygame.image.load(f"visuals/bg/bg{get_level_bg_id(i):04d}.png").convert(), (960, 540)
     )

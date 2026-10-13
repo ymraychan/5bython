@@ -36,16 +36,16 @@ class Game:
         else:
             self.level.draw(screen)
             
-    def update(self, screen: pygame.Surface, keysPressed: pygame.key.ScancodeWrapper, keysInstant: list[pygame.event.Event]) -> None:
+    def update(self, screen: pygame.Surface, keys_pressed: pygame.key.ScancodeWrapper, keys_instant: list[pygame.event.Event]) -> None:
         self.timer += 1
         if self.curr_level == -2:
             self.curr_level = menu.pre_menu.curr_level
         elif self.curr_level == -1:
-            menu.menu.level_progress = self.saveData["lvlProgress"]
+            menu.menu.level_progress = self.saveData["lvl_progress"]
             self.curr_level = menu.menu.curr_level
         elif self.curr_level == 0:
             menu.level_select.update(screen)
             menu.level_select.timer += 1
             self.curr_level = menu.level_select.curr_level
         else:
-            self.level.update(screen, keysPressed, keysInstant)
+            self.level.update(screen, keys_pressed, keys_instant)
