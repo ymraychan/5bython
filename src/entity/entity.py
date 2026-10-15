@@ -2,10 +2,11 @@ from typing import Final
 
 import numpy as np
 import pygame
-from cython import uchar as u8, cclass
+from cython import cclass
 from scipy import ndimage
 
 import properties
+from types_5b import CharPropertiesRow
 
 scale_factor: Final = 3
 
@@ -14,14 +15,14 @@ class Entity:
     id: int
     x: float
     y: float
-    state: u8
+    state: int
     path: str
     mat: tuple[float, float, float, float]
     tx: float
     ty: float
     vx: float
     vy: float
-    properties: Final[list[int | float | bool]]
+    properties: Final[CharPropertiesRow]
     char_model: Final[dict]
 
     surf: pygame.Surface

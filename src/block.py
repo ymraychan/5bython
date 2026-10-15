@@ -1,12 +1,14 @@
 from typing import Final, cast
 
 import pygame
-from cython import int as i32, cclass
+from cython import cclass
+from cython import int as i32
 
-from properties import block_properties, door_light_x
 from get_levels import char_to_code, get_level_bg_id, get_level_char_count
 from load_images import block_images
+from properties import block_properties, door_light_x
 from types_5b import BlockPropertiesRow
+
 
 @cclass
 class Block:

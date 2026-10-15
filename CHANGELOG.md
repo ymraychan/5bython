@@ -1,5 +1,10 @@
 # v1.0.0 (indev)
 
+## October 15, 2026 - v0.1.0
+* Use Ruff to format everything
+* Add strict typing to `properties.py`
+* Figure out the fact that `dict[Never, Never]` works
+
 ## October 11, 2026
 * Make everything except imports follow PEP 8
 * Rename a bunch of files
@@ -7,7 +12,7 @@
 * Add (hopefully) all image files
 
 ## September 26, 2026
-* Fix bug where on the very first frame of loading a level objects start at (0, 0)
+* Fix bug where on the very first frame of loading a level objects start at `(0, 0)`
 * Fix clipping into a block
 * Add restart key functionality
 * Remove guard clause for negative weight due to nonsensicality
@@ -37,7 +42,7 @@
 * Fix door light
 
 ## August 24, 2026
-* Add tx, ty and fix door. Still need to door light
+* Add `tx`, `ty` and fix door. Still need to add door light
 
 ## August 21, 2026
 * Fix box crash issues
